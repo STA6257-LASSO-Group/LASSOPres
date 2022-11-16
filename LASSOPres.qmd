@@ -10,22 +10,26 @@ format:
     df-print: paged
 ---
 
-## Introduction
+## Introduction / Linear Regression Overview
 
--   We have previously discussed continuous outcomes and the appropriate distributions.
+## What Is Regularization?
 
-    -   Normal
+## Regularized Regression Methods
 
-    -   Gamma
+## Ridge Regression
 
--   We also discussed logistic regression models for binary, ordinal, and multinomial data.
+## LASSO 
 
--   We will now discuss regression models for count data:
+## Elastic Net Regularization
 
-    -   Poisson
+## Dataset Overview
 
-    -   Negative binomial
+## Jackson Heart Traditional OLS Regression 
 
--   We will also discuss the need for zero-inflation models.
+## Jackson Heart High Collinearity Example
 
+## Jackson Heart High Predictor to Observation Ratio Example
 
+## Extremely High Dimension Data Example (NCI 60)
+
+## Summary and Conclusion
