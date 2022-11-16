@@ -1,0 +1,31 @@
+---
+title: "LASSO, Ridge Regression, and Elastic Net Regularization"
+format: 
+  revealjs:
+    theme: moon
+    self-contained: false
+    slide-number: false
+    width: 1600
+    height: 900
+    df-print: paged
+---
+
+## Introduction
+
+-   We have previously discussed continuous outcomes and the appropriate distributions.
+
+    -   Normal
+
+    -   Gamma
+
+-   We also discussed logistic regression models for binary, ordinal, and multinomial data.
+
+-   We will now discuss regression models for count data:
+
+    -   Poisson
+
+    -   Negative binomial
+
+-   We will also discuss the need for zero-inflation models.
+
+
