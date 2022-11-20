@@ -317,7 +317,7 @@ print(LASSOCoef)
 ### Notes
 
 -   Pure LASSO had the best fit.
--   The model is still potentially overfit. (13 predictors vs 92 observations)
+-   The model is still potentially overfit. (10 predictors vs 92 observations)
 -   Now there are features available for a more refined linear model.
 -   "Grouped" variables still need to be adjusted for.
 
