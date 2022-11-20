@@ -1,0 +1,350 @@
+---
+title: "LASSO, Ridge Regression, and Elastic Net Regularization"
+format: 
+  revealjs:
+    theme: moon
+    self-contained: false
+    slide-number: false
+    width: 1600
+    height: 900
+    df-print: paged
+---
+
+## Introduction / Linear Regression Overview
+
+*Regression* is the predicting or learning of numerical features in statistics and machine learning which allows for data driven decisions over guesswork.
+
+*Simple linear regression* is the relationship between one dependent variable and one independent variable to create a linear model that can be used to predict future outcomes.
+
+*Multilinear regression* is more complex with the addition of more independent variables.
+
+An issue can arise as the number of independent variables becomes too high resulting in less predictability which can be solved with *regularization*.
+
+## What Is Regularization?
+
+The process managing the independent variables in a way that maintains predictability.
+
+Regression models that contain too many independent variables can have an issue with the linear model not fitting or predicting well.
+
+[**Overfitting**]{.underline} the model is too close to the data provided which can cause a problem with different data sets and predicting future values
+
+[**Underfitting**]{.underline} the model is not close enough to the current data to determine accurate predictions
+
+To regularize models, we must manage the number and impact of independent variables. We can reduce the coefficients of the variables which decreases the impact of less important variables or eliminate the less impactful variables all together.
+
+## Regularized Regression Methods
+
+Three regularized regression methods are
+
+Ridge, Elastic Net, and LASSO.
+
+## Ridge Regression
+
+-   Reduces the impact of the variables that are not as important in the prediction of the model by reducing the value of the coefficients to near zero
+
+-   Can manage data sets in which the number of independent variables is greater than the number of observations in the data set. ( $p>n$)
+
+-   Does not preform variable selection as all independent variables remain the model
+
+-   Ridge regression uses a variable $\lambda _{Ridge}$which is the determining value in the reduction the coefficients
+
+## LASSO
+
+-   **L**east **A**bsolute **S**hrinkage and **S**election **O**perator
+
+-   Performs variable selection eliminating independent variables by reducing their coefficients to zero
+
+-   If collinearity exists, only one independent variable is kept in the model and the rest are discarded by reducing their coefficients to zero
+
+    -   This can be a problem is data sets with a lot of collinearity
+
+-   Cannot keep more predictors than observations therefore only recommended for data sets where the number of predictors is less than the number of observations ($p<n$)
+
+-   LASSO uses a variable we will call $\lambda _{LASSO}$ to eliminate the coefficients
+
+## Elastic Net Regularization
+
+-   Determined by a sliding scale that exists between ridge and LASSO by selecting an $\alpha$ between 1 and 0
+
+    -   $\alpha=0$ indicates ridge regression and $\alpha=1$ indicates LASSO
+
+-   Can perform variable selection
+
+-   Can work when the number of independent variables is greater than the number of observations in the data set. ($p>n$)
+
+-   Elastic net uses a balance of both the $\lambda _{Ridge}$ and $\lambda _{LASSO}$
+
+## Dataset Overview
+
+## Jackson Heart Traditional OLS Regression
+
+## Jackson Heart High Collinearity Example
+
+## Jackson Heart High Predictor to Observation Ratio Example
+
+## Human Freedom Index (High Dimension Data)
+
+### Data Overview
+
+-   The Human Freedom Index from the openintro R package
+-   This data consists of sociological measures of the different types of freedom. The main dataset has 1458 observations with 123 variables
+-   For this example, a single year of complete observations will be used, resuling in 93 observations across 99 variables.
+-   Mimics the situation if a researcher attempted to analyze the most recent year of data in isolation.
+-   Each column being examined in this data set is a continuous numerical variable.
+-   Some variables have high degrees of collinearity because of their relation to one another. For example, total disappearances is expected to have high collinearity with total violent disappearances.
+
+## Human Freedom Index (High Dimension Data)
+
+### Modeling Method
+
+-   pf_ss_homicide (homicide rate) will be the response variable.
+-   The remaining 98 variables will be the predictors (excluding any indexes or total scores).
+-   The GLMNET package in R will be used to perform the modeling.
+-   More information on the package can be found [here](https://glmnet.stanford.edu/articles/glmnet.html)
+
+### What the Data Looks Like
+
+```{r echo = FALSE, message=FALSE, warning=FALSE, results='hide'}
+
+library(ISLR)
+library(tidyverse)
+library(haven)
+library(dplyr)
+library(ggpubr)
+library(table1)
+library(fastDummies)
+library(ggplot2)
+library(lars)
+library(glmnet)
+library(data.table)
+library(caTools)
+library(olsrr)
+library(openintro)
+library(mice)
+library(misty)
+
+eval_results <- function(true, predicted, df) {
+  SSE <- sum((predicted - true)^2)
+  SST <- sum((true - mean(true))^2)
+  R_square <- 1 - SSE / SST
+  RMSE = sqrt(SSE/nrow(df))
+    
+  # Model performance metrics
+data.frame(
+  RMSE = RMSE,
+  Rsquare = R_square
+)
+  
+}
+
+```
+
+```{r}
+#Human Freedom Index Linear Model
+freedomData <- hfi
+freedomData <- freedomData %>% filter(year==2016)%>% select(c(-"year",-"ISO_code",-"countries",-"region",-"ef_score",-"ef_rank",-"hf_rank",-"hf_quartile",-"pf_score",-"pf_rank",-"pf_religion_estop_establish",-"pf_religion_estop_operate",-"pf_identity_legal",-"pf_rol_procedural",-"pf_rol_civil",-"pf_rol_criminal",-"pf_ss_women_inheritance_widows",-"pf_ss_women_inheritance_daughters",-"pf_association_political_establish",-"pf_association_political_operate",-"pf_association_sport_operate",-"pf_association_sport_establish",-"pf_identity_divorce",-"pf_association_prof_operate",-"pf_association_prof_establish"))%>%mutate(id = row_number())
+#check missing data values
+freedomData <- na.omit(freedomData) 
+head(freedomData,2)
+train <- freedomData %>% sample_frac(.8)
+test <- anti_join(freedomData, train, by='id')
+
+ytrain <- train$pf_ss_homicide
+ytest <- test$pf_ss_homicide
+xtrainLin <- train %>% select(c(-"id"))
+xtrain <- train %>% select(c(-"pf_ss_homicide",-"id"))
+xtestLin <- test %>% select(c(-"id"))
+xtest <- test %>% select(c(-"pf_ss_homicide",-"id"))
+
+xtestFrame <- xtest
+xtest <- data.matrix(xtest)
+predictors <- data.matrix(xtrain)
+resp <- ytrain
+
+linModel <- lm(pf_ss_homicide~., data=xtrainLin)
+```
+
+## Human Freedom Index (High Dimension Data)
+
+### What Happens in a Traditional Linear Model?
+
+```{r}
+summary(linModel)
+```
+
+![Model Output](LASSOPres_files/images/HFIModel1.png){fig-align="center"} ![Model Output](LASSOPres_files/images/HFModel2.png){fig-align="center"}
+
+The model does not work because there aren't enough degrees of freedom.
+
+## Human Freedom Index (High Dimension Data)
+
+### Regularization Method
+
+Each method will have a model fit. These will then have their RSquare and RMSE scores displayed to show a relative performance for each method. In the GLMNET package, alpha controls the method used. An alpha value of 1 corresponds to LASSO regression, a value of 0 corresponds to Ridge Regression, and a value in between corresponds to a form of Elastic Net Regularization.
+
+### Basic Code Structure
+
+-   Perform Cross Validation to acquire the optimal lambda. The alpha term is altered based on the method.
+-   Pass the optimal lambda into a new model based on the training data.
+-   Examine the impact on the coefficients.
+-   Using the model, make predictions on the training data and the test data.
+-   Store results and display scores for each method.
+
+## Human Freedom Index (High Dimension Data)
+
+### Fitting LASSO
+
+![Code 1](LASSOPres_files/images/code1.png){fig-align="center"} ![Code 2](LASSOPres_files/images/code2.png){fig-align="center"}
+
+```{r}
+set.seed(250)
+#LASSO
+modelResults <- data.frame(matrix(ncol=6,nrow=0))
+colnames(modelResults)<-c("Model","Train_RSquare","Train_RMSE","Test_RSquare","Test_RMSE","CoefficientCount")
+
+model <- cv.glmnet(predictors, resp, alpha=1)
+bestLambda <- model$lambda.min
+#Optimal Lambda has been fit.
+plot(model)
+finalModel <- glmnet(predictors,resp, alpha=1, lambda=bestLambda)
+coefTable <- coefficients(finalModel)
+coefList <- data.frame(matrix(ncol=2,nrow=0))
+colnames(coefList)<-c("Predictor","Coefficient")
+
+for(x in 1:nrow(coefTable)){
+ if(coefTable[x,1] != 0)
+ {rows <- nrow(coefList)
+ predNames <- data.frame(coefTable@Dimnames)
+   newRow <- c(predNames[x,1],coefTable[x,1])
+    coefList[rows+1,] <- newRow    
+   } 
+}
+
+finalModelPredict <- predict(finalModel, s= bestLambda, newx = predictors)
+finalModelTest <- predict(finalModel, s= bestLambda, newx = xtest)
+rows<-nrow(modelResults)
+newRow <- c("LASSO",eval_results(resp,finalModelPredict,freedomData)$Rsquare,eval_results(resp,finalModelPredict,freedomData)$RMSE,eval_results(ytest,finalModelTest,freedomData)$Rsquare,eval_results(ytest,finalModelTest,freedomData)$RMSE, count(coefList))
+modelResults[rows+1,]<-newRow
+LASSOCoef <- coefList
+model <- cv.glmnet(predictors, resp, alpha=0)
+bestLambda <- model$lambda.min
+#Optimal Lambda has been fit.
+finalModel <- glmnet(predictors,resp, alpha=0, lambda=bestLambda)
+coefTable <- coefficients(finalModel)
+coefList <- data.frame(matrix(ncol=2,nrow=0))
+colnames(coefList)<-c("Predictor","Coefficient")
+
+for(x in 1:nrow(coefTable)){
+ if(coefTable[x,1] != 0)
+ {rows <- nrow(coefList)
+ predNames <- data.frame(coefTable@Dimnames)
+   newRow <- c(predNames[x,1],coefTable[x,1])
+    coefList[rows+1,] <- newRow    
+   } 
+}
+
+finalModelPredict <- predict(finalModel, s= bestLambda, newx = predictors)
+finalModelTest <- predict(finalModel, s= bestLambda, newx = xtest)
+rows<-nrow(modelResults)
+newRow <- c("Ridge",eval_results(resp,finalModelPredict,freedomData)$Rsquare,eval_results(resp,finalModelPredict,freedomData)$RMSE,eval_results(ytest,finalModelTest,freedomData)$Rsquare,eval_results(ytest,finalModelTest,freedomData)$RMSE, count(coefList))
+modelResults[rows+1,]<-newRow
+model <- cv.glmnet(predictors, resp, alpha=.25)
+bestLambda <- model$lambda.min
+#Optimal Lambda has been fit.
+
+
+finalModel <- glmnet(predictors,resp, alpha=.25, lambda=bestLambda)
+coefTable <- coefficients(finalModel)
+coefList <- data.frame(matrix(ncol=2,nrow=0))
+colnames(coefList)<-c("Predictor","Coefficient")
+
+for(x in 1:nrow(coefTable)){
+ if(coefTable[x,1] != 0)
+ {rows <- nrow(coefList)
+ predNames <- data.frame(coefTable@Dimnames)
+   newRow <- c(predNames[x,1],coefTable[x,1])
+    coefList[rows+1,] <- newRow    
+   } 
+}
+
+finalModelPredict <- predict(finalModel, s= bestLambda, newx = predictors)
+finalModelTest <- predict(finalModel, s= bestLambda, newx = xtest)
+rows<-nrow(modelResults)
+newRow <- c("ENet.25",eval_results(resp,finalModelPredict,freedomData)$Rsquare,eval_results(resp,finalModelPredict,freedomData)$RMSE,eval_results(ytest,finalModelTest,freedomData)$Rsquare,eval_results(ytest,finalModelTest,freedomData)$RMSE, count(coefList))
+modelResults[rows+1,]<-newRow
+
+
+#Elastic Net 2
+model <- cv.glmnet(predictors, resp, alpha=.5)
+bestLambda <- model$lambda.min
+#Optimal Lambda has been fit.
+
+
+finalModel <- glmnet(predictors,resp, alpha=.5, lambda=bestLambda)
+coefTable <- coefficients(finalModel)
+coefList <- data.frame(matrix(ncol=2,nrow=0))
+colnames(coefList)<-c("Predictor","Coefficient")
+
+for(x in 1:nrow(coefTable)){
+ if(coefTable[x,1] != 0)
+ {rows <- nrow(coefList)
+ predNames <- data.frame(coefTable@Dimnames)
+   newRow <- c(predNames[x,1],coefTable[x,1])
+    coefList[rows+1,] <- newRow    
+   } 
+}
+
+finalModelPredict <- predict(finalModel, s= bestLambda, newx = predictors)
+finalModelTest <- predict(finalModel, s= bestLambda, newx = xtest)
+rows<-nrow(modelResults)
+newRow <- c("ENet.50",eval_results(resp,finalModelPredict,freedomData)$Rsquare,eval_results(resp,finalModelPredict,freedomData)$RMSE,eval_results(ytest,finalModelTest,freedomData)$Rsquare,eval_results(ytest,finalModelTest,freedomData)$RMSE, count(coefList))
+modelResults[rows+1,]<-newRow
+
+#Elastic Net 3
+model <- cv.glmnet(predictors, resp, alpha=.75)
+bestLambda <- model$lambda.min
+#Optimal Lambda has been fit.
+
+
+finalModel <- glmnet(predictors,resp, alpha=.75, lambda=bestLambda)
+coefTable <- coefficients(finalModel)
+coefList <- data.frame(matrix(ncol=2,nrow=0))
+colnames(coefList)<-c("Predictor","Coefficient")
+
+for(x in 1:nrow(coefTable)){
+ if(coefTable[x,1] != 0)
+ {rows <- nrow(coefList)
+ predNames <- data.frame(coefTable@Dimnames)
+   newRow <- c(predNames[x,1],coefTable[x,1])
+    coefList[rows+1,] <- newRow    
+   } 
+}
+
+finalModelPredict <- predict(finalModel, s= bestLambda, newx = predictors)
+finalModelTest <- predict(finalModel, s= bestLambda, newx = xtest)
+rows<-nrow(modelResults)
+newRow <- c("ENet.75",eval_results(resp,finalModelPredict,freedomData)$Rsquare,eval_results(resp,finalModelPredict,freedomData)$RMSE,eval_results(ytest,finalModelTest,freedomData)$Rsquare,eval_results(ytest,finalModelTest,freedomData)$RMSE, count(coefList))
+modelResults[rows+1,]<-newRow
+```
+
+The best Lambda chosen by this model was `r round(bestLambda,4)`
+
+## Human Freedom Index (High Dimension Data)
+
+### Results
+
+After repeating the process for Ridge, and 3 forms of Elastic Net, the end result of the modeling gives this table:
+
+```{r}
+print(modelResults)
+print(LASSOCoef)
+```
+
+### Notes
+
+-   Pure LASSO had the best fit.
+-   The model is still potentially overfit. (13 predictors vs 92 observations)
+-   Now there are features available for a more refined linear model.
+-   "Grouped" variables still need to be adjusted for.
+
+## Summary and Conclusion
