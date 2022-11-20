@@ -326,21 +326,57 @@
 
 <section id="introduction-linear-regression-overview" class="slide level2">
 <h2>Introduction / Linear Regression Overview</h2>
+<p><em>Regression</em> is the predicting or learning of numerical features in statistics and machine learning which allows for data driven decisions over guesswork.</p>
+<p><em>Simple linear regression</em> is the relationship between one dependent variable and one independent variable to create a linear model that can be used to predict future outcomes.</p>
+<p><em>Multilinear regression</em> is more complex with the addition of more independent variables.</p>
+<p>An issue can arise as the number of independent variables becomes too high resulting in less predictability which can be solved with <em>regularization</em>.</p>
 </section>
 <section id="what-is-regularization" class="slide level2">
 <h2>What Is Regularization?</h2>
+<p>The process managing the independent variables in a way that maintains predictability.</p>
+<p>Regression models that contain too many independent variables can have an issue with the linear model not fitting or predicting well.</p>
+<p><u><strong>Overfitting</strong></u> the model is too close to the data provided which can cause a problem with different data sets and predicting future values</p>
+<p><u><strong>Underfitting</strong></u> the model is not close enough to the current data to determine accurate predictions</p>
+<p>To regularize models, we must manage the number and impact of independent variables. We can reduce the coefficients of the variables which decreases the impact of less important variables or eliminate the less impactful variables all together.</p>
 </section>
 <section id="regularized-regression-methods" class="slide level2">
 <h2>Regularized Regression Methods</h2>
+<p>Three regularized regression methods are</p>
+<p>Ridge, Elastic Net, and LASSO.</p>
 </section>
 <section id="ridge-regression" class="slide level2">
 <h2>Ridge Regression</h2>
+<ul>
+<li><p>Reduces the impact of the variables that are not as important in the prediction of the model by reducing the value of the coefficients to near zero</p></li>
+<li><p>Can manage data sets in which the number of independent variables is greater than the number of observations in the data set. ( <span class="math inline">\(p&gt;n\)</span>)</p></li>
+<li><p>Does not preform variable selection as all independent variables remain the model</p></li>
+<li><p>Ridge regression uses a variable <span class="math inline">\(\lambda _{Ridge}\)</span>which is the determining value in the reduction the coefficients</p></li>
+</ul>
 </section>
 <section id="lasso" class="slide level2">
 <h2>LASSO</h2>
+<ul>
+<li><p><strong>L</strong>east <strong>A</strong>bsolute <strong>S</strong>hrinkage and <strong>S</strong>election <strong>O</strong>perator</p></li>
+<li><p>Performs variable selection eliminating independent variables by reducing their coefficients to zero</p></li>
+<li><p>If collinearity exists, only one independent variable is kept in the model and the rest are discarded by reducing their coefficients to zero</p>
+<ul>
+<li>This can be a problem is data sets with a lot of collinearity</li>
+</ul></li>
+<li><p>Cannot keep more predictors than observations therefore only recommended for data sets where the number of predictors is less than the number of observations (<span class="math inline">\(p&lt;n\)</span>)</p></li>
+<li><p>LASSO uses a variable we will call <span class="math inline">\(\lambda _{LASSO}\)</span> to eliminate the coefficients</p></li>
+</ul>
 </section>
 <section id="elastic-net-regularization" class="slide level2">
 <h2>Elastic Net Regularization</h2>
+<ul>
+<li><p>Determined by a sliding scale that exists between ridge and LASSO by selecting an <span class="math inline">\(\alpha\)</span> between 1 and 0</p>
+<ul>
+<li><span class="math inline">\(\alpha=0\)</span> indicates ridge regression and <span class="math inline">\(\alpha=1\)</span> indicates LASSO</li>
+</ul></li>
+<li><p>Can perform variable selection</p></li>
+<li><p>Can work when the number of independent variables is greater than the number of observations in the data set. (<span class="math inline">\(p&gt;n\)</span>)</p></li>
+<li><p>Elastic net uses a balance of both the <span class="math inline">\(\lambda _{Ridge}\)</span> and <span class="math inline">\(\lambda _{LASSO}\)</span></p></li>
+</ul>
 </section>
 <section id="dataset-overview" class="slide level2">
 <h2>Dataset Overview</h2>
@@ -404,8 +440,8 @@ ALL 74 residuals are 0: no residual degrees of freedom!
 
 Coefficients: (24 not defined because of singularities)
                                      Estimate Std. Error t value Pr(&gt;|t|)
-(Intercept)                         7.819e-09        NaN     NaN      NaN
-pf_rol                             -7.150e-10        NaN     NaN      NaN
+(Intercept)                        -2.638e-07        NaN     NaN      NaN
+pf_rol                             -1.773e-08        NaN     NaN      NaN
 pf_ss_disappearances_disap         -2.000e-01        NaN     NaN      NaN
 pf_ss_disappearances_violent       -2.000e-01        NaN     NaN      NaN
 pf_ss_disappearances_organized     -2.000e-01        NaN     NaN      NaN
@@ -417,84 +453,84 @@ pf_ss_women_missing                -3.333e-01        NaN     NaN      NaN
 pf_ss_women_inheritance            -3.333e-01        NaN     NaN      NaN
 pf_ss_women                                NA         NA      NA       NA
 pf_ss                               3.000e+00        NaN     NaN      NaN
-pf_movement_domestic                5.937e-10        NaN     NaN      NaN
-pf_movement_foreign                -3.190e-10        NaN     NaN      NaN
-pf_movement_women                   6.955e-10        NaN     NaN      NaN
+pf_movement_domestic               -1.718e-10        NaN     NaN      NaN
+pf_movement_foreign                -1.225e-09        NaN     NaN      NaN
+pf_movement_women                   7.464e-09        NaN     NaN      NaN
 pf_movement                                NA         NA      NA       NA
-pf_religion_estop                   5.477e-10        NaN     NaN      NaN
-pf_religion_harassment              2.430e-10        NaN     NaN      NaN
-pf_religion_restrictions            1.077e-10        NaN     NaN      NaN
+pf_religion_estop                  -2.359e-09        NaN     NaN      NaN
+pf_religion_harassment             -1.006e-08        NaN     NaN      NaN
+pf_religion_restrictions            4.734e-09        NaN     NaN      NaN
 pf_religion                                NA         NA      NA       NA
-pf_association_association          5.709e-10        NaN     NaN      NaN
-pf_association_assembly            -3.023e-10        NaN     NaN      NaN
-pf_association_political            9.072e-10        NaN     NaN      NaN
-pf_association_prof                -3.514e-10        NaN     NaN      NaN
-pf_association_sport                4.090e-10        NaN     NaN      NaN
+pf_association_association         -1.069e-08        NaN     NaN      NaN
+pf_association_assembly             2.978e-09        NaN     NaN      NaN
+pf_association_political            5.311e-09        NaN     NaN      NaN
+pf_association_prof                -3.293e-09        NaN     NaN      NaN
+pf_association_sport                2.419e-09        NaN     NaN      NaN
 pf_association                             NA         NA      NA       NA
-pf_expression_killed               -1.914e-10        NaN     NaN      NaN
-pf_expression_jailed                2.570e-10        NaN     NaN      NaN
-pf_expression_influence             4.837e-10        NaN     NaN      NaN
-pf_expression_control              -2.890e-09        NaN     NaN      NaN
-pf_expression_cable                 8.236e-11        NaN     NaN      NaN
-pf_expression_newspapers           -1.397e-09        NaN     NaN      NaN
-pf_expression_internet              3.503e-10        NaN     NaN      NaN
+pf_expression_killed               -9.895e-10        NaN     NaN      NaN
+pf_expression_jailed               -4.846e-09        NaN     NaN      NaN
+pf_expression_influence             7.170e-09        NaN     NaN      NaN
+pf_expression_control               1.303e-08        NaN     NaN      NaN
+pf_expression_cable                 8.361e-09        NaN     NaN      NaN
+pf_expression_newspapers           -4.819e-09        NaN     NaN      NaN
+pf_expression_internet             -5.114e-09        NaN     NaN      NaN
 pf_expression                              NA         NA      NA       NA
-pf_identity_parental_marriage      -1.098e-09        NaN     NaN      NaN
-pf_identity_parental_divorce        3.940e-10        NaN     NaN      NaN
+pf_identity_parental_marriage       1.309e-08        NaN     NaN      NaN
+pf_identity_parental_divorce       -5.078e-09        NaN     NaN      NaN
 pf_identity_parental                       NA         NA      NA       NA
-pf_identity_sex_male                4.313e-12        NaN     NaN      NaN
-pf_identity_sex_female             -5.664e-10        NaN     NaN      NaN
+pf_identity_sex_male               -1.073e-09        NaN     NaN      NaN
+pf_identity_sex_female              5.119e-09        NaN     NaN      NaN
 pf_identity_sex                            NA         NA      NA       NA
-pf_identity                         1.602e-09        NaN     NaN      NaN
-ef_government_consumption          -7.165e-10        NaN     NaN      NaN
-ef_government_transfers             7.607e-10        NaN     NaN      NaN
-ef_government_enterprises           3.693e-10        NaN     NaN      NaN
-ef_government_tax_income            1.388e-10        NaN     NaN      NaN
-ef_government_tax_payroll          -5.209e-10        NaN     NaN      NaN
+pf_identity                        -1.372e-08        NaN     NaN      NaN
+ef_government_consumption           5.772e-10        NaN     NaN      NaN
+ef_government_transfers            -7.590e-10        NaN     NaN      NaN
+ef_government_enterprises           1.169e-09        NaN     NaN      NaN
+ef_government_tax_income           -1.162e-09        NaN     NaN      NaN
+ef_government_tax_payroll           1.470e-09        NaN     NaN      NaN
 ef_government_tax                          NA         NA      NA       NA
 ef_government                              NA         NA      NA       NA
-ef_legal_judicial                   6.111e-10        NaN     NaN      NaN
-ef_legal_courts                    -2.442e-09        NaN     NaN      NaN
-ef_legal_protection                -5.481e-10        NaN     NaN      NaN
-ef_legal_military                  -7.406e-10        NaN     NaN      NaN
-ef_legal_integrity                 -1.386e-09        NaN     NaN      NaN
-ef_legal_enforcement               -1.466e-09        NaN     NaN      NaN
-ef_legal_restrictions              -8.559e-10        NaN     NaN      NaN
-ef_legal_police                    -1.571e-09        NaN     NaN      NaN
-ef_legal_crime                     -4.936e-10        NaN     NaN      NaN
-ef_legal_gender                    -1.981e-08        NaN     NaN      NaN
-ef_legal                            6.498e-09        NaN     NaN      NaN
-ef_money_growth                    -7.919e-11        NaN     NaN      NaN
-ef_money_sd                        -1.658e-10        NaN     NaN      NaN
-ef_money_inflation                  5.972e-10        NaN     NaN      NaN
-ef_money_currency                   4.861e-10        NaN     NaN      NaN
+ef_legal_judicial                   4.306e-09        NaN     NaN      NaN
+ef_legal_courts                     2.250e-08        NaN     NaN      NaN
+ef_legal_protection                 3.621e-09        NaN     NaN      NaN
+ef_legal_military                   1.865e-08        NaN     NaN      NaN
+ef_legal_integrity                  1.864e-08        NaN     NaN      NaN
+ef_legal_enforcement                2.237e-08        NaN     NaN      NaN
+ef_legal_restrictions               2.424e-08        NaN     NaN      NaN
+ef_legal_police                     2.754e-08        NaN     NaN      NaN
+ef_legal_crime                      1.306e-08        NaN     NaN      NaN
+ef_legal_gender                     3.191e-07        NaN     NaN      NaN
+ef_legal                           -1.490e-07        NaN     NaN      NaN
+ef_money_growth                    -8.158e-09        NaN     NaN      NaN
+ef_money_sd                        -7.856e-10        NaN     NaN      NaN
+ef_money_inflation                  6.336e-09        NaN     NaN      NaN
+ef_money_currency                  -2.461e-09        NaN     NaN      NaN
 ef_money                                   NA         NA      NA       NA
-ef_trade_tariffs_revenue           -1.237e-09        NaN     NaN      NaN
-ef_trade_tariffs_mean               2.480e-10        NaN     NaN      NaN
-ef_trade_tariffs_sd                -5.285e-10        NaN     NaN      NaN
+ef_trade_tariffs_revenue            6.377e-09        NaN     NaN      NaN
+ef_trade_tariffs_mean               9.184e-12        NaN     NaN      NaN
+ef_trade_tariffs_sd                -8.738e-10        NaN     NaN      NaN
 ef_trade_tariffs                           NA         NA      NA       NA
-ef_trade_regulatory_nontariff       9.782e-10        NaN     NaN      NaN
-ef_trade_regulatory_compliance      2.499e-10        NaN     NaN      NaN
+ef_trade_regulatory_nontariff      -8.392e-09        NaN     NaN      NaN
+ef_trade_regulatory_compliance     -1.149e-08        NaN     NaN      NaN
 ef_trade_regulatory                        NA         NA      NA       NA
-ef_trade_black                      2.232e-10        NaN     NaN      NaN
-ef_trade_movement_foreign          -1.101e-09        NaN     NaN      NaN
-ef_trade_movement_capital          -4.536e-10        NaN     NaN      NaN
-ef_trade_movement_visit             1.109e-10        NaN     NaN      NaN
+ef_trade_black                      4.937e-10        NaN     NaN      NaN
+ef_trade_movement_foreign           1.806e-08        NaN     NaN      NaN
+ef_trade_movement_capital           1.733e-09        NaN     NaN      NaN
+ef_trade_movement_visit             2.579e-09        NaN     NaN      NaN
 ef_trade_movement                          NA         NA      NA       NA
 ef_trade                                   NA         NA      NA       NA
-ef_regulation_credit_ownership     -5.016e-10        NaN     NaN      NaN
-ef_regulation_credit_private       -4.360e-10        NaN     NaN      NaN
-ef_regulation_credit_interest       8.876e-11        NaN     NaN      NaN
+ef_regulation_credit_ownership     -3.965e-10        NaN     NaN      NaN
+ef_regulation_credit_private       -8.776e-09        NaN     NaN      NaN
+ef_regulation_credit_interest      -6.000e-09        NaN     NaN      NaN
 ef_regulation_credit                       NA         NA      NA       NA
-ef_regulation_labor_minwage         3.454e-10        NaN     NaN      NaN
-ef_regulation_labor_firing          3.295e-12        NaN     NaN      NaN
-ef_regulation_labor_bargain         1.563e-10        NaN     NaN      NaN
-ef_regulation_labor_hours           4.242e-11        NaN     NaN      NaN
-ef_regulation_labor_dismissal      -1.258e-10        NaN     NaN      NaN
-ef_regulation_labor_conscription   -2.075e-10        NaN     NaN      NaN
+ef_regulation_labor_minwage         3.583e-09        NaN     NaN      NaN
+ef_regulation_labor_firing          1.936e-09        NaN     NaN      NaN
+ef_regulation_labor_bargain        -7.408e-09        NaN     NaN      NaN
+ef_regulation_labor_hours          -8.162e-10        NaN     NaN      NaN
+ef_regulation_labor_dismissal       1.056e-09        NaN     NaN      NaN
+ef_regulation_labor_conscription   -5.058e-10        NaN     NaN      NaN
 ef_regulation_labor                        NA         NA      NA       NA
-ef_regulation_business_adm          2.885e-09        NaN     NaN      NaN
-ef_regulation_business_bureaucracy  3.250e-10        NaN     NaN      NaN
+ef_regulation_business_adm         -1.225e-10        NaN     NaN      NaN
+ef_regulation_business_bureaucracy  2.959e-09        NaN     NaN      NaN
 ef_regulation_business_start               NA         NA      NA       NA
 ef_regulation_business_bribes              NA         NA      NA       NA
 ef_regulation_business_licensing           NA         NA      NA       NA
@@ -533,7 +569,7 @@ F-statistic:   NaN on 73 and 0 DF,  p-value: NA</code></pre>
 <p><img data-src="LASSOPres_files/figure-revealjs/unnamed-chunk-4-1.png" width="960"></p>
 </div>
 </div>
-<p>The best Lambda chosen by this model was 0.0279</p>
+<p>The best Lambda chosen by this model was 0.0275</p>
 </section>
 <section id="human-freedom-index-high-dimension-data-5" class="slide level2">
 <h2>Human Freedom Index (High Dimension Data)</h2>
@@ -542,34 +578,32 @@ F-statistic:   NaN on 73 and 0 DF,  p-value: NA</code></pre>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>    Model Train_RSquare Train_RMSE Test_RSquare  Test_RMSE CoefficientCount
-1   LASSO     0.9990432 0.07278511    0.9976585 0.06238846               13
-2   Ridge     0.5186546 1.63249691    0.3006274 1.07822016               98
-3 ENet.25     0.9879030 0.25879869    0.9302193 0.34058132               38
-4 ENet.50     0.9958414 0.15173866    0.9852695 0.15648105               26
-5 ENet.75     0.9983230 0.09635833    0.9953539 0.08788121               17</code></pre>
+1   LASSO     0.9991181 0.07108391    0.9992912 0.03240711               10
+2   Ridge     0.4871703 1.71410072    0.4862875 0.87246509               98
+3 ENet.25     0.9902910 0.23585026    0.9789709 0.17652182               39
+4 ENet.50     0.9970979 0.12894495    0.9959606 0.07736519               29
+5 ENet.75     0.9988439 0.08138597    0.9988618 0.04106831               19</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>                         Predictor           Coefficient
-1                      (Intercept)     0.218357246338484
-2  pf_ss_disappearances_fatalities   -0.0210813300259238
-3    pf_ss_disappearances_injuries  -0.00234287232721286
-4             pf_ss_disappearances    -0.891244531305954
-5                      pf_ss_women    -0.952627373784635
-6                            pf_ss      2.84571026116812
-7           pf_religion_harassment   -0.0198962345797718
-8                      pf_religion -0.000488666737948109
-9             pf_association_sport  -0.00452335465128898
-10            pf_expression_killed   0.00377695414975005
-11                  ef_legal_crime    0.0387247670768028
-12           ef_trade_tariffs_mean   -0.0132306741530616
-13         ef_trade_movement_visit -0.000526530300229909</code></pre>
+<pre><code>                         Predictor          Coefficient
+1                      (Intercept)    0.168200754463578
+2  pf_ss_disappearances_fatalities    -0.02241336174905
+3             pf_ss_disappearances    -0.92243003225701
+4                      pf_ss_women   -0.960591534713684
+5                            pf_ss     2.87146462589872
+6           pf_religion_harassment -0.00580751745324265
+7                      pf_religion  -0.0031112374009115
+8             pf_expression_killed   0.0021236012082239
+9                   ef_legal_crime   0.0297126197065787
+10         ef_trade_movement_visit -0.00245910922765564</code></pre>
 </div>
 </div>
 <h3 id="notes">Notes</h3>
 <ul>
 <li>Pure LASSO had the best fit.</li>
-<li>The model is still potentially overfit.</li>
+<li>The model is still potentially overfit. (13 predictors vs 92 observations)</li>
 <li>Now there are features available for a more refined linear model.</li>
+<li>“Grouped” variables still need to be adjusted for.</li>
 </ul>
 </section>
 <section id="summary-and-conclusion" class="slide level2">
