@@ -78,9 +78,381 @@ Ridge, Elastic Net, and LASSO.
 
 ## Jackson Heart Traditional OLS Regression
 
-## Jackson Heart High Collinearity Example
+## Jackson Heart Study (JHS) Data
 
-## Jackson Heart High Predictor to Observation Ratio Example
+JHS Visit 1 dataset of 2653 observations and 198 variables
+
+For this example, we'll model the Total Depressive Symptoms Score (depression) as the Dependent variable (y).
+
+```{r include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+#Code based on tutorial from David Caughlin's LASSO Regression in R
+#https://youtu.be/5GZ5BHOugBQ
+#Import libraries 
+library(GGally)
+library(haven)
+library(plyr)
+library(dbplyr)
+library(dtplyr)
+library(tidyverse)
+library(readr)
+library(caret)
+library(randomForest)
+library(mice)
+library(gdata)
+library(ggplot2)
+library(glmnet)
+library(olsrr)
+library(genridge)
+library(car)
+library(dplyr)
+library(repr)
+library(ggcorrplot)
+library(plotly)
+library(reshape2)
+library(AER)
+library(mctest)
+library(qgraph)
+library(fmsb)
+library(coefplot)
+```
+
+```{r include=FALSE}
+#Import data sets
+analysis1 <- read_dta("analysis1.dta")
+V1_Impute <- read_dta("data_imp2.dta")
+```
+
+```{r include=FALSE}
+#Regression Model for ALL continuous variables
+BIG_Mod <- lm(depression ~ ., data=V1_Impute)
+summary (BIG_Mod)
+```
+
+```{r}
+#New dataset from initial lm model
+ 
+#Take out non-numeric, categorical, and singularities, keep Y/N from LM model
+LM_Data <- V1_Impute %>% dplyr::select(depression,fasthours,age,alc,bmi, weight,neck,betablkmeds,diureticmeds,dmmedtype, fastinginsulin, homa_ir,aldosterone, adiponectin,maneuvers, asthma,fev1,fev6,fev1pp,systlvdia,lvmecho,repolarant,repolarantlat,minorscarantlat,miecg,visionlossever,hsgrad,    dailydiscr,lifetimediscrm,discrmburden,perceivedstress,weeklystress,vitamind2,vitamind3,darkgrnveg,nbpctresiden1mi,sportindex,hyindex)
+```
+
+```{r}
+LM_Mod <-lm(depression ~., data=LM_Data)
+summary(LM_Mod)
+```
+
+## JHS: Residuals
+
+```{r}
+#get list of residuals 
+res <- resid(LM_Mod)
+#produce residual vs. fitted plot
+plot(fitted(LM_Mod), res)
+#add a horizontal line at 0 
+abline(0,0)
+```
+
+## JHS: Heavy Tails/Nonparametric
+
+```{r}
+#create Q-Q plot for residuals
+qqnorm(res)
+#add a straight diagonal line to the plot
+qqline(res) 
+```
+
+## **Correlation Matrix heat map:high multicollinearity for JHS**
+
+-   2 or more predictor variables strongly linearly dependent
+-   leads to overfitting and low prediction accuracy
+
+```{r}
+CorMatrix1_lm <- ggcorr(LM_Data, label_alpha = FALSE)
+CorMatrix1_lm
+```
+
+## **JHS Variance Inflation Factor (VIF) Scores : Multicollinearity**
+
+```{r}
+#Regression Model for smaller LM dataset (Multicollinear)
+VIF <- vif(LM_Mod)
+Tolerance = 1/VIF
+v1 <- data.frame(VIF)
+write.table(v1, "VIF Table")
+v2 <- data.frame(Tolerance)
+write.table(v2, "VIF Table")
+v.table = data.frame(cbind(v1,v2))
+print(v.table)
+```
+
+## JHS: Highly Multicollinear
+
+-   can use regularization to alleviate
+
+    ![](LASSOPres_files/images/CorrPlot1.png)
+
+## Why LASSO or Ridge for JHS?
+
+Modifying Regression Models with Regularization:Choosing the Penalty Term/Optimal Lambda
+
+![](LASSOPres_files/images/L1L2Constrain.png)
+
+^~James et al., 2013~^
+
+## Jackson Heart: LASSO (𝞪=1), L1 Norm
+
+**𝞴 x \|Slope\|**
+
+```{r}
+#define response variable
+y <- LM_Data$depression
+#define matrix of predictor variables
+x <- data.matrix(LM_Data[, c('fasthours','age','alc','weight','neck','bmi','betablkmeds','diureticmeds', 'dmmedtype','fastinginsulin', 'homa_ir','aldosterone','adiponectin','maneuvers','asthma','fev1','fev6','fev1pp','systlvdia','lvmecho','repolarant','repolarantlat','minorscarantlat','miecg','visionlossever','hsgrad','dailydiscr','lifetimediscrm','discrmburden','perceivedstress','weeklystress','vitamind2','vitamind3','darkgrnveg','nbpctresiden1mi','sportindex','hyindex')])
+LASSO_fit <- glmnet(x,y,alpha = 1)
+plot(LASSO_fit)
+```
+
+## Jackson Heart: LASSO (𝞪=1), L1 Norm
+
+```{r}
+#cross-validated fit of lambda
+LASSO_cvfit <- cv.glmnet(x, y, alpha=1)
+plot(LASSO_cvfit)
+LASSO_cvfit$lambda.min
+```
+
+## Jackson Heart: LASSO (𝞪=1), L1 Norm
+
+More Variables dropped as Lambda is increased. Higest VIF's: BMI, weight, fev1, fev6
+
+```{r}
+#LASSO regression model coefficients/parameter estimates
+coef(LASSO_fit,s=c(0.002,0.04,0.2,2.0))
+```
+
+```{r}
+```
+
+## Jackson Heart: Ridge (𝞪=0), L2 Norm
+
+**𝞴 x Slope^2^**
+
+```{r}
+Ridge_fit <- glmnet(x,y,alpha = 0)
+plot(Ridge_fit)
+```
+
+## Jackson Heart: Ridge (𝞪=0), L2 Norm
+
+```{r}
+#cross-validated fit of lambda
+Ridge_cvfit <- cv.glmnet(x, y, alpha=0)
+plot(Ridge_cvfit )
+Ridge_cvfit$lambda.min
+```
+
+## Jackson Heart: Ridge (𝞪=0), L2 Norm
+
+```{r}
+#Ridge regression model coefficients/parameter estimates
+coef(Ridge_fit,s=c(0.03,0.34,3.0,30))
+```
+
+```{r include=FALSE}
+#Partitioning Data 80/20 Split
+set.seed(123)
+#Create Index Matrix: 80% split matrix NOT list only split once
+index <- createDataPartition(LM_Data$depression, p=0.8, list=FALSE, times=1)
+#Create Test and Training df
+#-is all except index
+train_df <- LM_Data[index,]
+test_df <- LM_Data[-index,]
+```
+
+```{r include=FALSE}
+# k-fold Cross Validation to train LASSO
+#(because sample size is large, using 10-fold)
+#Train Control Function from Caret Package
+#Create Object to assign all the training method info to 
+#cross validation method, 10 fold
+tctrl_method <- trainControl(method='cv', number=10,
+                           savePredictions = 'all')
+#Specify & train LASSO Regression Model
+#Create vector of Lambda Values to find optimal (LASSO Tuning Parameter)
+lambda_vector <- 10^seq(5,-5, length=500)
+set.seed(123)
+#LASSO Regression Model estimated from Training data and 10-fold cv
+# dot is all other variables except outcome variable
+#grand mean center, "center" and standardize, "scale" at this step
+#c=combine, glmnet in caret package, alpha=1 for lasso (0 for ridge)
+```
+
+```{r include=FALSE}
+#LASSO Model (alpha=1)
+LASSO_mod1 <- train(depression ~ .,
+              data=train_df,
+              preProcess=c("center", "scale"),
+              method="glmnet",
+              tuneGrid=expand.grid(alpha=1,lambda=lambda_vector),
+              trControl=tctrl_method,
+              na.action=na.omit
+              )
+#Warning Message OK!!
+```
+
+```{r include=FALSE}
+#Best Optimal Lambda
+LASSO_mod1$bestTune
+LASSO_mod1$bestTune$lambda
+#plot log(lambda) & RMSE 
+plot(log(LASSO_mod1$results$lambda),
+     LASSO_mod1$results$RMSE,
+     xlab="log(lambda)",
+     ylab="RMSE",
+     xlim=c(-6,3))
+#print(log(0.013373))#check with log(lambda)
+```
+
+```{r include=FALSE}
+#Model Prediction on test data
+predict1 <- predict(LASSO_mod1, newdata=test_df)
+#Model Accuracy
+LASSO_mod1_rmse <- data.frame(RMSE=RMSE(predict1, test_df$depression))
+#RMSE 10
+#R^2E
+LASSO_rss <- sum((predict1 - test_df$depression) ^ 2)
+LASSO_tss <- sum((test_df$depression - mean(test_df$depression)) ^ 2)
+LASSO_mod1_rsq <- 1 - LASSO_rss/LASSO_tss
+LASSO_mod1_rmse
+LASSO_mod1_rsq
+```
+
+```{r include=FALSE}
+#Compare LASSO to Ridge Regression
+#Set Seed (reproducible results)
+set.seed(123)
+#Ridge Model (alpha=0)
+Ridge_mod2 <- train(depression ~ .,
+              data=train_df,
+              preProcess=c("center", "scale"),
+              method="glmnet",
+              tuneGrid=expand.grid(alpha=0,lambda=lambda_vector),
+              trControl=tctrl_method,
+              na.action=na.omit)
+#Warning Message OK!!
+```
+
+```{r include=FALSE}
+#Model Prediction on test data
+predict2 <- predict(Ridge_mod2, newdata=test_df)
+#Model Accuracy
+Ridge_mod2_rmse <- data.frame(RMSE=RMSE(predict2, test_df$depression))
+#RMSE 10
+#R^2E
+Ridge_rss2 <- sum((predict2 - test_df$depression) ^ 2)
+Ridge_tss2 <- sum((test_df$depression - mean(test_df$depression)) ^ 2)
+Ridge_mod2_rsq <- 1 - Ridge_rss2/Ridge_tss2
+Ridge_mod2_rmse
+Ridge_mod2_rsq
+```
+
+```{r include=FALSE}
+#ElasticNet Regresstion
+#tctrl_method (using from LASSO earlier)
+#Set Seed (reproducible results)
+set.seed(123)
+#Specify OLS model estimated with training data, train_df
+#10-fold cross validation
+EN_mod3 <- train(depression ~ .,
+              data=train_df,
+              preProcess=c("center", "scale"),
+              method="glmnet",
+              tuneGrid=expand.grid(alpha=0.5,lambda=lambda_vector),
+              trControl=tctrl_method,
+              na.action=na.omit)
+```
+
+```{r include=FALSE}
+#Predict outcome from training data based on test data using ElasticNet
+predict3 <- predict(EN_mod3, newdata=test_df)
+#Assess model performance
+#Model Accuracy
+EN_mod3_rmse <- data.frame(RMSE=RMSE(predict3, test_df$depression))
+#RMSE 10
+#R^2E
+EN_rss3 <- sum((predict3 - test_df$depression) ^ 2)
+EN_tss3 <- sum((test_df$depression - mean(test_df$depression)) ^ 2)
+EN_mod3_rsq <- 1 - EN_rss3/EN_tss3
+EN_mod3_rmse
+EN_mod3_rsq
+```
+
+```{r}
+#Compare LASSO to OLS Regresstion
+#tctrl_method (using from LASSO earlier)
+#Set Seed (reproducible results)
+set.seed(123)
+#Specify OLS model estimated with training data, train_df
+#10-fold cross validation
+OLS_mod4 <- train(depression ~ .,
+             data=train_df,
+             preProcess=c("center","scale"),#grand means center and scale to make results comparable to LASSO
+             method="lm",
+             trControl=tctrl_method,
+             na.action=na.omit)
+#print(mod4)
+```
+
+```{r include=FALSE}
+#Predict outcome from training data based on test data using OLS
+predict4 <- predict(OLS_mod4, newdata=test_df)
+#Assess model performance
+#Model Accuracy
+OLS_mod4_rmse <- data.frame(RMSE=RMSE(predict4, test_df$depression))
+#RMSE 10
+#R^2E
+OLS_rss4 <- sum((predict4 - test_df$depression) ^ 2)
+OLS_tss4 <- sum((test_df$depression - mean(test_df$depression)) ^ 2)
+OLS_mod4_rsq <- 1 - OLS_rss4/OLS_tss4
+OLS_mod4_rmse
+OLS_mod4_rsq
+```
+
+## Jackson Heart: Comparing Models
+
+![](LASSOPres_files/images/Comp_Table.png)
+
+```{r include=FALSE}
+#compare models 
+compare_models(LASSO_mod1,Ridge_mod2, metric="RMSE")
+compare_models(LASSO_mod1,Ridge_mod2, metric="Rsquared")
+compare_models(LASSO_mod1,EN_mod3, metric="RMSE")
+compare_models(LASSO_mod1,EN_mod3, metric="Rsquared")
+compare_models(LASSO_mod1,OLS_mod4, metric="RMSE")
+compare_models(LASSO_mod1,OLS_mod4, metric="Rsquared")
+compare_models(Ridge_mod2,EN_mod3, metric="RMSE")
+compare_models(Ridge_mod2,EN_mod3, metric="Rsquared")
+compare_models(Ridge_mod2,OLS_mod4, metric="RMSE")
+compare_models(Ridge_mod2,OLS_mod4, metric="Rsquared")
+compare_models(EN_mod3,OLS_mod4, metric="RMSE")
+compare_models(EN_mod3,OLS_mod4, metric="Rsquared")
+```
+
+## Jackson Heart: Comparing Models
+
+```{r}
+#Compare LASSO and OLS predictive performance based on test_df
+comp <- matrix(c(LASSO_mod1_rmse, LASSO_mod1_rsq,
+                 Ridge_mod2_rmse,Ridge_mod2_rsq,
+                 EN_mod3_rmse,EN_mod3_rsq,
+                 OLS_mod4_rmse,OLS_mod4_rsq),
+               ncol=2,byrow=TRUE)
+#Labels
+colnames(comp) <- c("RMSE","R-squared")
+rownames(comp) <- c("LASSO", "Ridge", "ElasticNet", "OLS")
+print(comp)
+```
+
 
 ## Human Freedom Index (High Dimension Data)
 
