@@ -77,43 +77,6 @@ Ridge, Elastic Net, and LASSO.
 
 ## General Process for Regularization Modeling
 
--   The GLMNET package in R will be used to perform the modeling.
--   More information on the package can be found [here](https://glmnet.stanford.edu/articles/glmnet.html)
--   First an optimal Lambda needs to be found. There are a lot of techniques for this, but GLMNET provides a built in cross-fold validation method. 
--   ![](LASSOPres_files/images/LASSOLambda.png)![](LASSOPres_files/images/LASSOLambda2.png)
--   The alpha parameter controls whether or not it is a Ridge, LASSO, or Elastic Net Implementation.
--   This function returns an entire group of models, not just one. 
-
-## General Process for Regularization Modeling
-
--   Once optimal Lambda is found, it is passed into a final model using the non-cv glmnet function.
--   ![](LASSOPres_files/images/LASSOFinal.png)
--   This function returns a single model that can be used for predictions, etc.
--   The GLMNET package contains options for fitting penalized models for many other generalized linear models such as Logistic Regression and Poisson Regression. 
-
-## Human Freedom Index (High Dimension Data)
-
-### Data Overview
-
--   The Human Freedom Index from the openintro R package
--   This data consists of sociological measures of the different types of freedom. The main dataset has 1458 observations with 123 variables
--   For this example, a single year of complete observations will be used, resulting in 93 observations across 99 variables.
--   Mimics the situation if a researcher attempted to analyze the most recent year of data in isolation.
--   Each column being examined in this data set is a continuous numerical variable.
--   Some variables have high degrees of collinearity because of their relation to one another. For example, total disappearances is expected to have high collinearity with total violent disappearances.
-
-## Human Freedom Index (High Dimension Data)
-
-### Modeling Method
-
--   pf_ss_homicide (homicide rate) will be the response variable.
--   The remaining 98 variables will be the predictors (excluding any indexes or total scores).
--   The data will be randomly split 80/20 into testing and training sets. 
--   The training sets will be further validated using the GLMNET cross-fold validation functions. 
-
-
-### What the Data Looks Like
-
 ```{r echo = FALSE, message=FALSE, warning=FALSE, results='hide'}
 library(ISLR)
 library(tidyverse)
@@ -152,7 +115,6 @@ freedomData <- hfi
 freedomData <- freedomData %>% filter(year==2016)%>% select(c(-"year",-"ISO_code",-"countries",-"region",-"ef_score",-"ef_rank",-"hf_rank",-"hf_quartile",-"pf_score",-"pf_rank",-"pf_religion_estop_establish",-"pf_religion_estop_operate",-"pf_identity_legal",-"pf_rol_procedural",-"pf_rol_civil",-"pf_rol_criminal",-"pf_ss_women_inheritance_widows",-"pf_ss_women_inheritance_daughters",-"pf_association_political_establish",-"pf_association_political_operate",-"pf_association_sport_operate",-"pf_association_sport_establish",-"pf_identity_divorce",-"pf_association_prof_operate",-"pf_association_prof_establish"))%>%mutate(id = row_number())
 #check missing data values
 freedomData <- na.omit(freedomData) 
-head(freedomData,2)
 train <- freedomData %>% sample_frac(.8)
 test <- anti_join(freedomData, train, by='id')
 ytrain <- train$pf_ss_homicide
@@ -168,6 +130,52 @@ resp <- ytrain
 linModel <- lm(pf_ss_homicide~., data=xtrainLin)
 ```
 
+-   The GLMNET package in R will be used to perform the modeling.
+-   More information on the package can be found [here](https://glmnet.stanford.edu/articles/glmnet.html)
+-   Process is to find an optimal lambda, then use that in final model
+-   alpha controls type of regularization
+
+```{r echo=TRUE, eval=FALSE}
+#Cross Fold Validation to find Optimal Lambda
+#Returns multiple models
+models <- cv.glmnet(predictors, resp, alpha=1)
+bestLambda <- model$lambda.min
+#Optimal Lambda has been fit.
+#Returns single model
+finalModel <- glmnet(predictors,resp, alpha=1, lambda=bestLambda)
+#Making Predictions
+finalModelPredict <- predict(finalModel, s= bestLambda, newx = predictors)
+```
+
+
+## Human Freedom Index (High Dimension Data)
+
+### Data Overview
+
+-   The Human Freedom Index from the openintro R package
+-   This data consists of sociological measures of the different types of freedom. The main dataset has 1458 observations with 123 variables
+-   For this example, a single year of complete observations will be used, resulting in 93 observations across 99 variables.
+-   Mimics the situation if a researcher attempted to analyze the most recent year of data in isolation.
+-   Each column being examined in this data set is a continuous numerical variable.
+-   Some variables have high degrees of collinearity because of their relation to one another. For example, total disappearances is expected to have high collinearity with total violent disappearances.
+
+## Human Freedom Index (High Dimension Data)
+
+### Modeling Method
+
+-   pf_ss_homicide (homicide rate) will be the response variable.
+-   The remaining 98 variables will be the predictors (excluding any indexes or total scores).
+-   The data will be randomly split 80/20 into testing and training sets. 
+-   The training sets will be further validated using the GLMNET cross-fold validation functions. 
+
+
+### What the Data Looks Like
+
+```{r}
+head(freedomData,2)
+```
+
+
 ## Human Freedom Index (High Dimension Data)
 
 ### What Happens in a Traditional Linear Model?
@@ -176,15 +184,9 @@ linModel <- lm(pf_ss_homicide~., data=xtrainLin)
 summary(linModel)
 ```
 
-![Model Output](LASSOPres_files/images/HFIModel1.png){fig-align="center"} ![Model Output](LASSOPres_files/images/HFModel2.png){fig-align="center"}
-
 The model does not work because there aren't enough degrees of freedom.
 
 ## Human Freedom Index (High Dimension Data)
-
-### Regularization Method
-
-Each method will have a model fit. These will then have their RSquare and RMSE scores displayed to show a relative performance for each method. In the GLMNET package, alpha controls the method used. An alpha value of 1 corresponds to LASSO regression, a value of 0 corresponds to Ridge Regression, and a value in between corresponds to a form of Elastic Net Regularization.
 
 ### Basic Code Structure
 
@@ -198,17 +200,22 @@ Each method will have a model fit. These will then have their RSquare and RMSE s
 
 ### Fitting LASSO
 
-![Code 1](LASSOPres_files/images/code1.png){fig-align="center"} ![Code 2](LASSOPres_files/images/code2.png){fig-align="center"}
-
 ```{r}
 set.seed(250)
 #LASSO
 modelResults <- data.frame(matrix(ncol=6,nrow=0))
 colnames(modelResults)<-c("Model","Train_RSquare","Train_RMSE","Test_RSquare","Test_RMSE","CoefficientCount")
+```
+
+```{r echo=TRUE}
 model <- cv.glmnet(predictors, resp, alpha=1)
 bestLambda <- model$lambda.min
 #Optimal Lambda has been fit.
 plot(model)
+
+```
+
+```{r}
 finalModel <- glmnet(predictors,resp, alpha=1, lambda=bestLambda)
 coefTable <- coefficients(finalModel)
 coefList <- data.frame(matrix(ncol=2,nrow=0))
@@ -333,9 +340,29 @@ print(LASSOCoef)
 
 ## Jackson Heart Study (JHS) Data
 
-JHS Visit 1 dataset of 2653 observations and 198 variables
+-   community-based, observational study
 
-For this example, we'll model the Total Depressive Symptoms Score (depression) as the Dependent variable (y).
+-   urban and rural areas of the three counties (Jackson Miss)
+
+-   4 recruitment pools: random, 17%; volunteer, 22%; currently enrolled in the Atherosclerosis Risk in Communities (ARIC) Study, 30% and secondary family members, 31%.
+
+-   African Americans 35-84 years (old including family 21 to 34 years)
+
+-   The final cohort of 5,306 participants includes 6.59% of all African American Jackson MSA residents aged 35-84 (N-76,426, US Census 2000).
+
+-   medical history, physical examination, labs and interview questions
+
+-   12-month intervals (Exam 1, baseline)
+
+## JHS Data Violates Assumptions
+
+<https://www.jacksonheartstudy.org> for more info
+
+Our JHS Visit 1 dataset : 2653 observations and 198 variables
+
+We modeled the Total Depressive Symptoms Score (depression) as the Dependent variable (y)
+
+Excluded NA's, non-numeric & categorical data, some redundant variables were omitted
 
 ```{r include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
@@ -368,35 +395,31 @@ library(mctest)
 library(qgraph)
 library(fmsb)
 library(coefplot)
+library(cowplot)
+library(magick)
+library(png)
+library(ggpmisc)
+library(gamlr)
 ```
 
 ```{r include=FALSE}
 #Import data sets
-analysis1 <- read_dta("analysis1.dta")
 V1_Impute <- read_dta("data_imp2.dta")
 ```
 
 ```{r include=FALSE}
-#Regression Model for ALL continuous variables
-BIG_Mod <- lm(depression ~ ., data=V1_Impute)
-summary (BIG_Mod)
-```
-
-```{r}
 #New dataset from initial lm model
  
 #Take out non-numeric, categorical, and singularities, keep Y/N from LM model
-LM_Data <- V1_Impute %>% dplyr::select(depression,fasthours,age,alc,bmi, weight,neck,betablkmeds,diureticmeds,dmmedtype, fastinginsulin, homa_ir,aldosterone, adiponectin,maneuvers, asthma,fev1,fev6,fev1pp,systlvdia,lvmecho,repolarant,repolarantlat,minorscarantlat,miecg,visionlossever,hsgrad,    dailydiscr,lifetimediscrm,discrmburden,perceivedstress,weeklystress,vitamind2,vitamind3,darkgrnveg,nbpctresiden1mi,sportindex,hyindex)
+LM_Data <- V1_Impute %>% dplyr::select(depression,fasthours,age,bmi, weight,neck,fastinginsulin, homa_ir,aldosterone, adiponectin,maneuvers, fev1,fev6,fev1pp,systlvdia,lvmecho,repolarant,dailydiscr,lifetimediscrm,discrmburden,perceivedstress,weeklystress,vitamind2,vitamind3,darkgrnveg,nbpctresiden1mi,sportindex,hyindex)
 ```
 
-```{r}
+```{r include=FALSE}
 LM_Mod <-lm(depression ~., data=LM_Data)
 summary(LM_Mod)
 ```
 
-## JHS: Residuals
-
-```{r}
+```{r include=FALSE}
 #get list of residuals 
 res <- resid(LM_Mod)
 #produce residual vs. fitted plot
@@ -405,16 +428,26 @@ plot(fitted(LM_Mod), res)
 abline(0,0)
 ```
 
-## JHS: Heavy Tails/Nonparametric
-
-```{r}
+```{r include=FALSE}
 #create Q-Q plot for residuals
 qqnorm(res)
 #add a straight diagonal line to the plot
 qqline(res) 
 ```
 
-## **Correlation Matrix heat map:high multicollinearity for JHS**
+```{r}
+layout_matrix_1 <- matrix(1:4, ncol = 2)                  # Define position matrix
+#layout_matrix_1                                           # Print position matrix
+#      [,1] [,2] 
+# [1,]    1    3    
+# [2,]    2    4    
+layout(layout_matrix_1)                                   # Specify layout
+hist(LM_Data$depression, xlim=c(0,45), breaks=100, col='navy',main = "Histogram of Depression Frequency", xlab = "Depression Scale Score")
+#create diagnostic plots
+plot(LM_Mod)
+```
+
+## **Correlation Matrix heat map: high multicollinearity**
 
 -   2 or more predictor variables strongly linearly dependent
 -   leads to overfitting and low prediction accuracy
@@ -425,6 +458,10 @@ CorMatrix1_lm
 ```
 
 ## **JHS Variance Inflation Factor (VIF) Scores : Multicollinearity**
+
+-   VIF & Tolerance to measure multicollinearity
+
+-   can use regularization to alleviate
 
 ```{r}
 #Regression Model for smaller LM dataset (Multicollinear)
@@ -438,21 +475,15 @@ v.table = data.frame(cbind(v1,v2))
 print(v.table)
 ```
 
-## JHS: Highly Multicollinear
-
--   can use regularization to alleviate
-
-    ![](LASSOPres_files/images/CorrPlot1.png)
-
 ## Why LASSO or Ridge for JHS?
 
-Modifying Regression Models with Regularization:Choosing the Penalty Term/Optimal Lambda
+Modifying GLM Regression Models with Regularization: Choosing the Penalty Term/Optimal Lambda
 
-![](LASSOPres_files/images/L1L2Constrain.png)
+![](LASSOPres_files/images/L1L2Constrain.png){width="589"}
 
 ^~James et al., 2013~^
 
-## Jackson Heart: LASSO (𝞪=1), L1 Norm
+## Jackson Heart: LASSO (𝞪=1), L1 Norm (lm)
 
 **𝞴 x \|Slope\|**
 
@@ -460,14 +491,48 @@ Modifying Regression Models with Regularization:Choosing the Penalty Term/Optima
 #define response variable
 y <- LM_Data$depression
 #define matrix of predictor variables
-x <- data.matrix(LM_Data[, c('fasthours','age','alc','weight','neck','bmi','betablkmeds','diureticmeds', 'dmmedtype','fastinginsulin', 'homa_ir','aldosterone','adiponectin','maneuvers','asthma','fev1','fev6','fev1pp','systlvdia','lvmecho','repolarant','repolarantlat','minorscarantlat','miecg','visionlossever','hsgrad','dailydiscr','lifetimediscrm','discrmburden','perceivedstress','weeklystress','vitamind2','vitamind3','darkgrnveg','nbpctresiden1mi','sportindex','hyindex')])
+x <- data.matrix(LM_Data[, c('fasthours','age','weight','neck','bmi','fastinginsulin', 'homa_ir','aldosterone','adiponectin','maneuvers','fev1','fev6','fev1pp','systlvdia','lvmecho','repolarant','dailydiscr','lifetimediscrm','discrmburden','perceivedstress','weeklystress','vitamind2','vitamind3','darkgrnveg','nbpctresiden1mi','sportindex','hyindex')])
+layout_matrix_1 <- matrix(1:2, ncol = 2)                  # Define position matrix
+#layout_matrix_1                                           # Print position matrix
+#      [,1] [,2] 
+# [1,]    1    3    
+# [2,]    2    4    
+layout(layout_matrix_1)
 LASSO_fit <- glmnet(x,y,alpha = 1)
+#cross-validated fit of lambda
+LASSO_cvfit <- cv.glmnet(x, y, alpha=1)
+LASSO_cvfit$lambda.min
 plot(LASSO_fit)
+plot(LASSO_cvfit)
 ```
 
-## Jackson Heart: LASSO (𝞪=1), L1 Norm
+## Jackson Heart: LASSO (𝞪=1), L1 Norm (Gamma Penalty)
 
 ```{r}
+layout_matrix_1 <- matrix(1:2, ncol = 2)                  # Define position matrix
+#layout_matrix_1                                           # Print position matrix
+#      [,1] [,2] 
+# [1,]    1    3    
+# [2,]    2    4    
+layout(layout_matrix_1)
+Gamma_Mod <- gamlr(x, y, 
+   family=c("gaussian"),
+   gamma=0,nlambda=100, lambda.start=Inf,  
+   lambda.min.ratio=0.01, free=NULL, standardize=TRUE, 
+   obsweight=NULL,varweight=NULL,
+   tol=1e-7,maxit=1e5,verb=FALSE)
+## run models to extra small lambda 1e-3xlambda.start
+fitlasso <- gamlr(x, y, gamma=0, lambda.min.ratio=1e-3) # lasso
+fitgl <- gamlr(x, y, gamma=2, lambda.min.ratio=1e-3) # small gamma
+fitglbv <- gamlr(x, y, gamma=10, lambda.min.ratio=1e-3) # big gamma
+par(mfrow=c(1,3))
+ylim = range(c(fitglbv$beta@x))
+plot(fitlasso, ylim=ylim, col="navy")
+plot(fitgl, ylim=ylim, col="maroon")
+plot(fitglbv, ylim=ylim, col="darkorange")
+```
+
+```{r include=FALSE}
 #cross-validated fit of lambda
 LASSO_cvfit <- cv.glmnet(x, y, alpha=1)
 plot(LASSO_cvfit)
@@ -480,10 +545,8 @@ More Variables dropped as Lambda is increased. Higest VIF's: BMI, weight, fev1, 
 
 ```{r}
 #LASSO regression model coefficients/parameter estimates
-coef(LASSO_fit,s=c(0.002,0.04,0.2,2.0))
-```
-
-```{r}
+coef(LASSO_fit,s=c(0.002,0.004,0.2,2.0))
+coef(Gamma_Mod, select=NULL, k=2, corrected=TRUE)
 ```
 
 ## Jackson Heart: Ridge (𝞪=0), L2 Norm
@@ -491,20 +554,23 @@ coef(LASSO_fit,s=c(0.002,0.04,0.2,2.0))
 **𝞴 x Slope^2^**
 
 ```{r}
+layout_matrix_1 <- matrix(1:2, ncol = 2)                  # Define position matrix
+#layout_matrix_1                                           # Print position matrix
+#      [,1] [,2] 
+# [1,]    1    3    
+# [2,]    2    4    
+layout(layout_matrix_1)
 Ridge_fit <- glmnet(x,y,alpha = 0)
-plot(Ridge_fit)
-```
-
-## Jackson Heart: Ridge (𝞪=0), L2 Norm
-
-```{r}
 #cross-validated fit of lambda
 Ridge_cvfit <- cv.glmnet(x, y, alpha=0)
-plot(Ridge_cvfit )
 Ridge_cvfit$lambda.min
+plot(Ridge_fit)
+plot(Ridge_cvfit )
 ```
 
 ## Jackson Heart: Ridge (𝞪=0), L2 Norm
+
+No Variables dropped as Lambda is increased. Higest VIF's: BMI, weight, fev1, fev6
 
 ```{r}
 #Ridge regression model coefficients/parameter estimates
@@ -671,10 +737,6 @@ OLS_mod4_rmse
 OLS_mod4_rsq
 ```
 
-## Jackson Heart: Comparing Models
-
-![](LASSOPres_files/images/Comp_Table.png)
-
 ```{r include=FALSE}
 #compare models 
 compare_models(LASSO_mod1,Ridge_mod2, metric="RMSE")
@@ -693,6 +755,8 @@ compare_models(EN_mod3,OLS_mod4, metric="Rsquared")
 
 ## Jackson Heart: Comparing Models
 
+LASSO \>Elastic Net\>OLS\>Ridge
+
 ```{r}
 #Compare LASSO and OLS predictive performance based on test_df
 comp <- matrix(c(LASSO_mod1_rmse, LASSO_mod1_rsq,
@@ -706,5 +770,24 @@ rownames(comp) <- c("LASSO", "Ridge", "ElasticNet", "OLS")
 print(comp)
 ```
 
-
 ## Summary and Conclusion
+
+![](LASSOPres_files/images/Comp_Table.png){width="487"}
+
+-   Ridge Regression and Lasso Regression are modifications of the General Linear Model, adding bias with a penalty term to compensate for overfitting
+
+-   Regularization is tolerant to multicollinearity
+
+-   LASSO can be used in feature selection
+
+-   All models have their limitations
+
+## **Future Directions**
+
+-   *Group LASSO* : Yuan, M. and Lin, Y. (2007) Model Selection and Estimation in the Gaussian Graphical Model. Biometrika, 94, 19-35. <https://doi.org/10.1093/biomet/asm018>
+
+-   *Adaptive LASSO:* Hui Zou (2006) The Adaptive Lasso and Its Oracle Properties, Journal of the American Statistical Association, 101:476, 1418-1429 <https://doi.org/10.1198/016214506000000735>
+
+-   *LARS:* Least Angle Regression, Lasso and Forward Stagewise [lars package - RDocumentation](https://www.rdocumentation.org/packages/lars/versions/1.3)
+
+-   *LASSO +different distributions (gamma) and Gzlm/GLM*

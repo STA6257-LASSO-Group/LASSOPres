@@ -22,6 +22,70 @@
     div.column{display: inline-block; vertical-align: top; width: 50%;}
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+      }
+    pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+    div.sourceCode
+      { color: #f8f8f2;  }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #f8f8f2; } /* Normal */
+    code span.al { color: #f07178; background-color: #2a0f15; font-weight: bold; } /* Alert */
+    code span.an { color: #d4d0ab; } /* Annotation */
+    code span.at { color: #00e0e0; } /* Attribute */
+    code span.bn { color: #d4d0ab; } /* BaseN */
+    code span.bu { color: #abe338; } /* BuiltIn */
+    code span.cf { color: #ffa07a; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #abe338; } /* Char */
+    code span.cn { color: #ffd700; } /* Constant */
+    code span.co { color: #f8f8f2; font-style: italic; } /* Comment */
+    code span.cv { color: #ffd700; } /* CommentVar */
+    code span.do { color: #f8f8f2; } /* Documentation */
+    code span.dt { color: #ffa07a; } /* DataType */
+    code span.dv { color: #d4d0ab; } /* DecVal */
+    code span.er { color: #f07178; text-decoration: underline; } /* Error */
+    code span.ex { color: #00e0e0; font-weight: bold; } /* Extension */
+    code span.fl { color: #d4d0ab; } /* Float */
+    code span.fu { color: #ffa07a; } /* Function */
+    code span.im { color: #abe338; } /* Import */
+    code span.in { color: #d4d0ab; } /* Information */
+    code span.kw { color: #ffa07a; font-weight: bold; } /* Keyword */
+    code span.op { color: #ffa07a; } /* Operator */
+    code span.ot { color: #00e0e0; } /* Other */
+    code span.pp { color: #dcc6e0; } /* Preprocessor */
+    code span.re { color: #00e0e0; background-color: #f8f8f2; } /* RegionMarker */
+    code span.sc { color: #abe338; } /* SpecialChar */
+    code span.ss { color: #abe338; } /* SpecialString */
+    code span.st { color: #abe338; } /* String */
+    code span.va { color: #00e0e0; } /* Variable */
+    code span.vs { color: #abe338; } /* VerbatimString */
+    code span.wa { color: #dcc6e0; } /* Warning */
   </style>
   <link rel="stylesheet" href="LASSOPres_files/libs/revealjs/dist/theme/quarto.css" id="theme">
   <link href="LASSOPres_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
@@ -380,23 +444,29 @@
 </section>
 <section id="general-process-for-regularization-modeling" class="slide level2">
 <h2>General Process for Regularization Modeling</h2>
+<div class="cell">
+
+</div>
+<div class="cell">
+
+</div>
 <ul>
 <li>The GLMNET package in R will be used to perform the modeling.</li>
 <li>More information on the package can be found <a href="https://glmnet.stanford.edu/articles/glmnet.html">here</a></li>
-<li>First an optimal Lambda needs to be found. There are a lot of techniques for this, but GLMNET provides a built in cross-fold validation method.</li>
-<li><img data-src="LASSOPres_files/images/LASSOLambda.png"><img data-src="LASSOPres_files/images/LASSOLambda2.png"></li>
-<li>The alpha parameter controls whether or not it is a Ridge, LASSO, or Elastic Net Implementation.</li>
-<li>This function returns an entire group of models, not just one.</li>
+<li>Process is to find an optimal lambda, then use that in final model</li>
+<li>alpha controls type of regularization</li>
 </ul>
-</section>
-<section id="general-process-for-regularization-modeling-1" class="slide level2">
-<h2>General Process for Regularization Modeling</h2>
-<ul>
-<li>Once optimal Lambda is found, it is passed into a final model using the non-cv glmnet function.</li>
-<li><img data-src="LASSOPres_files/images/LASSOFinal.png"></li>
-<li>This function returns a single model that can be used for predictions, etc.</li>
-<li>The GLMNET package contains options for fitting penalized models for many other generalized linear models such as Logistic Regression and Poisson Regression.</li>
-</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co">#Cross Fold Validation to find Optimal Lambda</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="co">#Returns multiple models</span></span>
+<span id="cb1-3"><a href="#cb1-3"></a>models <span class="ot">&lt;-</span> <span class="fu">cv.glmnet</span>(predictors, resp, <span class="at">alpha=</span><span class="dv">1</span>)</span>
+<span id="cb1-4"><a href="#cb1-4"></a>bestLambda <span class="ot">&lt;-</span> model<span class="sc">$</span>lambda.min</span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="co">#Optimal Lambda has been fit.</span></span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="co">#Returns single model</span></span>
+<span id="cb1-7"><a href="#cb1-7"></a>finalModel <span class="ot">&lt;-</span> <span class="fu">glmnet</span>(predictors,resp, <span class="at">alpha=</span><span class="dv">1</span>, <span class="at">lambda=</span>bestLambda)</span>
+<span id="cb1-8"><a href="#cb1-8"></a><span class="co">#Making Predictions</span></span>
+<span id="cb1-9"><a href="#cb1-9"></a>finalModelPredict <span class="ot">&lt;-</span> <span class="fu">predict</span>(finalModel, <span class="at">s=</span> bestLambda, <span class="at">newx =</span> predictors)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="human-freedom-index-high-dimension-data" class="slide level2">
 <h2>Human Freedom Index (High Dimension Data)</h2>
@@ -420,9 +490,6 @@
 <li>The training sets will be further validated using the GLMNET cross-fold validation functions.</li>
 </ul>
 <h3 id="what-the-data-looks-like">What the Data Looks Like</h3>
-<div class="cell">
-
-</div>
 <div class="cell">
 <div class="cell-output-display">
 
@@ -448,8 +515,8 @@ ALL 74 residuals are 0: no residual degrees of freedom!
 
 Coefficients: (24 not defined because of singularities)
                                      Estimate Std. Error t value Pr(&gt;|t|)
-(Intercept)                         9.009e-08        NaN     NaN      NaN
-pf_rol                              2.459e-09        NaN     NaN      NaN
+(Intercept)                        -2.577e-07        NaN     NaN      NaN
+pf_rol                              1.093e-09        NaN     NaN      NaN
 pf_ss_disappearances_disap         -2.000e-01        NaN     NaN      NaN
 pf_ss_disappearances_violent       -2.000e-01        NaN     NaN      NaN
 pf_ss_disappearances_organized     -2.000e-01        NaN     NaN      NaN
@@ -461,84 +528,84 @@ pf_ss_women_missing                -3.333e-01        NaN     NaN      NaN
 pf_ss_women_inheritance            -3.333e-01        NaN     NaN      NaN
 pf_ss_women                                NA         NA      NA       NA
 pf_ss                               3.000e+00        NaN     NaN      NaN
-pf_movement_domestic                2.505e-10        NaN     NaN      NaN
-pf_movement_foreign                -1.071e-09        NaN     NaN      NaN
-pf_movement_women                  -5.752e-10        NaN     NaN      NaN
+pf_movement_domestic               -2.128e-10        NaN     NaN      NaN
+pf_movement_foreign                 1.804e-09        NaN     NaN      NaN
+pf_movement_women                   1.011e-09        NaN     NaN      NaN
 pf_movement                                NA         NA      NA       NA
-pf_religion_estop                  -4.339e-11        NaN     NaN      NaN
-pf_religion_harassment             -2.314e-10        NaN     NaN      NaN
-pf_religion_restrictions           -5.494e-10        NaN     NaN      NaN
+pf_religion_estop                  -1.352e-09        NaN     NaN      NaN
+pf_religion_harassment              1.346e-09        NaN     NaN      NaN
+pf_religion_restrictions           -1.058e-09        NaN     NaN      NaN
 pf_religion                                NA         NA      NA       NA
-pf_association_association         -4.733e-10        NaN     NaN      NaN
-pf_association_assembly             2.921e-11        NaN     NaN      NaN
-pf_association_political           -2.309e-10        NaN     NaN      NaN
-pf_association_prof                 2.395e-10        NaN     NaN      NaN
-pf_association_sport               -1.356e-11        NaN     NaN      NaN
+pf_association_association         -1.792e-09        NaN     NaN      NaN
+pf_association_assembly             9.499e-10        NaN     NaN      NaN
+pf_association_political           -1.887e-10        NaN     NaN      NaN
+pf_association_prof                 5.459e-10        NaN     NaN      NaN
+pf_association_sport                1.024e-09        NaN     NaN      NaN
 pf_association                             NA         NA      NA       NA
-pf_expression_killed               -1.577e-10        NaN     NaN      NaN
-pf_expression_jailed               -2.117e-10        NaN     NaN      NaN
-pf_expression_influence            -5.308e-10        NaN     NaN      NaN
-pf_expression_control               7.550e-10        NaN     NaN      NaN
-pf_expression_cable                 1.639e-09        NaN     NaN      NaN
-pf_expression_newspapers            1.478e-09        NaN     NaN      NaN
-pf_expression_internet             -1.705e-09        NaN     NaN      NaN
+pf_expression_killed                1.098e-09        NaN     NaN      NaN
+pf_expression_jailed               -2.024e-09        NaN     NaN      NaN
+pf_expression_influence            -6.377e-10        NaN     NaN      NaN
+pf_expression_control              -1.000e-10        NaN     NaN      NaN
+pf_expression_cable                 2.357e-09        NaN     NaN      NaN
+pf_expression_newspapers            7.573e-10        NaN     NaN      NaN
+pf_expression_internet             -1.849e-10        NaN     NaN      NaN
 pf_expression                              NA         NA      NA       NA
-pf_identity_parental_marriage       1.693e-10        NaN     NaN      NaN
-pf_identity_parental_divorce        7.024e-10        NaN     NaN      NaN
+pf_identity_parental_marriage       9.795e-10        NaN     NaN      NaN
+pf_identity_parental_divorce       -2.897e-10        NaN     NaN      NaN
 pf_identity_parental                       NA         NA      NA       NA
-pf_identity_sex_male               -2.907e-10        NaN     NaN      NaN
-pf_identity_sex_female             -7.849e-11        NaN     NaN      NaN
+pf_identity_sex_male                7.542e-10        NaN     NaN      NaN
+pf_identity_sex_female             -1.812e-09        NaN     NaN      NaN
 pf_identity_sex                            NA         NA      NA       NA
-pf_identity                        -2.149e-10        NaN     NaN      NaN
-ef_government_consumption           2.238e-09        NaN     NaN      NaN
-ef_government_transfers            -1.142e-09        NaN     NaN      NaN
-ef_government_enterprises          -2.478e-10        NaN     NaN      NaN
-ef_government_tax_income           -8.920e-10        NaN     NaN      NaN
-ef_government_tax_payroll           5.231e-10        NaN     NaN      NaN
+pf_identity                        -2.020e-09        NaN     NaN      NaN
+ef_government_consumption          -1.439e-09        NaN     NaN      NaN
+ef_government_transfers             1.743e-10        NaN     NaN      NaN
+ef_government_enterprises          -2.477e-10        NaN     NaN      NaN
+ef_government_tax_income            1.130e-09        NaN     NaN      NaN
+ef_government_tax_payroll           5.007e-11        NaN     NaN      NaN
 ef_government_tax                          NA         NA      NA       NA
 ef_government                              NA         NA      NA       NA
-ef_legal_judicial                  -2.521e-09        NaN     NaN      NaN
-ef_legal_courts                    -6.174e-09        NaN     NaN      NaN
-ef_legal_protection                 7.778e-10        NaN     NaN      NaN
-ef_legal_military                  -1.390e-09        NaN     NaN      NaN
-ef_legal_integrity                 -2.541e-09        NaN     NaN      NaN
-ef_legal_enforcement               -2.342e-09        NaN     NaN      NaN
-ef_legal_restrictions              -2.179e-09        NaN     NaN      NaN
-ef_legal_police                    -4.762e-09        NaN     NaN      NaN
-ef_legal_crime                     -1.531e-09        NaN     NaN      NaN
-ef_legal_gender                    -7.819e-08        NaN     NaN      NaN
-ef_legal                            2.481e-08        NaN     NaN      NaN
-ef_money_growth                     2.386e-10        NaN     NaN      NaN
-ef_money_sd                         1.292e-09        NaN     NaN      NaN
-ef_money_inflation                  2.184e-09        NaN     NaN      NaN
-ef_money_currency                  -4.401e-10        NaN     NaN      NaN
+ef_legal_judicial                  -3.159e-09        NaN     NaN      NaN
+ef_legal_courts                     3.793e-09        NaN     NaN      NaN
+ef_legal_protection                 4.171e-09        NaN     NaN      NaN
+ef_legal_military                   3.295e-10        NaN     NaN      NaN
+ef_legal_integrity                  1.445e-10        NaN     NaN      NaN
+ef_legal_enforcement               -2.450e-09        NaN     NaN      NaN
+ef_legal_restrictions              -1.646e-09        NaN     NaN      NaN
+ef_legal_police                    -1.737e-09        NaN     NaN      NaN
+ef_legal_crime                      1.933e-10        NaN     NaN      NaN
+ef_legal_gender                     4.987e-09        NaN     NaN      NaN
+ef_legal                            4.031e-10        NaN     NaN      NaN
+ef_money_growth                    -2.190e-10        NaN     NaN      NaN
+ef_money_sd                         2.913e-09        NaN     NaN      NaN
+ef_money_inflation                 -2.856e-10        NaN     NaN      NaN
+ef_money_currency                   1.240e-09        NaN     NaN      NaN
 ef_money                                   NA         NA      NA       NA
-ef_trade_tariffs_revenue            3.638e-10        NaN     NaN      NaN
-ef_trade_tariffs_mean               7.331e-10        NaN     NaN      NaN
-ef_trade_tariffs_sd                 6.117e-10        NaN     NaN      NaN
+ef_trade_tariffs_revenue           -2.284e-10        NaN     NaN      NaN
+ef_trade_tariffs_mean               3.017e-09        NaN     NaN      NaN
+ef_trade_tariffs_sd                 1.024e-09        NaN     NaN      NaN
 ef_trade_tariffs                           NA         NA      NA       NA
-ef_trade_regulatory_nontariff      -5.000e-09        NaN     NaN      NaN
-ef_trade_regulatory_compliance     -4.817e-10        NaN     NaN      NaN
+ef_trade_regulatory_nontariff      -1.042e-09        NaN     NaN      NaN
+ef_trade_regulatory_compliance     -5.374e-10        NaN     NaN      NaN
 ef_trade_regulatory                        NA         NA      NA       NA
-ef_trade_black                     -1.421e-09        NaN     NaN      NaN
-ef_trade_movement_foreign           3.015e-10        NaN     NaN      NaN
-ef_trade_movement_capital           2.962e-10        NaN     NaN      NaN
-ef_trade_movement_visit            -5.608e-10        NaN     NaN      NaN
+ef_trade_black                      2.128e-08        NaN     NaN      NaN
+ef_trade_movement_foreign          -4.373e-09        NaN     NaN      NaN
+ef_trade_movement_capital          -2.954e-10        NaN     NaN      NaN
+ef_trade_movement_visit            -3.029e-10        NaN     NaN      NaN
 ef_trade_movement                          NA         NA      NA       NA
 ef_trade                                   NA         NA      NA       NA
-ef_regulation_credit_ownership      9.550e-10        NaN     NaN      NaN
-ef_regulation_credit_private        6.521e-10        NaN     NaN      NaN
-ef_regulation_credit_interest      -1.641e-09        NaN     NaN      NaN
+ef_regulation_credit_ownership      1.284e-10        NaN     NaN      NaN
+ef_regulation_credit_private       -7.485e-10        NaN     NaN      NaN
+ef_regulation_credit_interest       2.745e-09        NaN     NaN      NaN
 ef_regulation_credit                       NA         NA      NA       NA
-ef_regulation_labor_minwage         7.748e-12        NaN     NaN      NaN
-ef_regulation_labor_firing         -6.921e-10        NaN     NaN      NaN
-ef_regulation_labor_bargain        -7.378e-10        NaN     NaN      NaN
-ef_regulation_labor_hours          -4.617e-10        NaN     NaN      NaN
-ef_regulation_labor_dismissal      -2.662e-10        NaN     NaN      NaN
-ef_regulation_labor_conscription    5.005e-10        NaN     NaN      NaN
+ef_regulation_labor_minwage         2.763e-10        NaN     NaN      NaN
+ef_regulation_labor_firing          9.433e-10        NaN     NaN      NaN
+ef_regulation_labor_bargain         6.190e-10        NaN     NaN      NaN
+ef_regulation_labor_hours          -2.784e-10        NaN     NaN      NaN
+ef_regulation_labor_dismissal       3.293e-10        NaN     NaN      NaN
+ef_regulation_labor_conscription   -4.282e-10        NaN     NaN      NaN
 ef_regulation_labor                        NA         NA      NA       NA
-ef_regulation_business_adm          1.454e-09        NaN     NaN      NaN
-ef_regulation_business_bureaucracy  5.006e-10        NaN     NaN      NaN
+ef_regulation_business_adm         -2.391e-09        NaN     NaN      NaN
+ef_regulation_business_bureaucracy  4.209e-10        NaN     NaN      NaN
 ef_regulation_business_start               NA         NA      NA       NA
 ef_regulation_business_bribes              NA         NA      NA       NA
 ef_regulation_business_licensing           NA         NA      NA       NA
@@ -552,13 +619,10 @@ Multiple R-squared:      1, Adjusted R-squared:    NaN
 F-statistic:   NaN on 73 and 0 DF,  p-value: NA</code></pre>
 </div>
 </div>
-<p><img data-src="LASSOPres_files/images/HFIModel1.png" data-fig-align="center" alt="Model Output"> <img data-src="LASSOPres_files/images/HFModel2.png" data-fig-align="center" alt="Model Output"></p>
 <p>The model does not work because there aren’t enough degrees of freedom.</p>
 </section>
 <section id="human-freedom-index-high-dimension-data-3" class="slide level2">
 <h2>Human Freedom Index (High Dimension Data)</h2>
-<h3 id="regularization-method">Regularization Method</h3>
-<p>Each method will have a model fit. These will then have their RSquare and RMSE scores displayed to show a relative performance for each method. In the GLMNET package, alpha controls the method used. An alpha value of 1 corresponds to LASSO regression, a value of 0 corresponds to Ridge Regression, and a value in between corresponds to a form of Elastic Net Regularization.</p>
 <h3 id="basic-code-structure">Basic Code Structure</h3>
 <ul>
 <li>Perform Cross Validation to acquire the optimal lambda. The alpha term is altered based on the method.</li>
@@ -571,13 +635,20 @@ F-statistic:   NaN on 73 and 0 DF,  p-value: NA</code></pre>
 <section id="human-freedom-index-high-dimension-data-4" class="slide level2">
 <h2>Human Freedom Index (High Dimension Data)</h2>
 <h3 id="fitting-lasso">Fitting LASSO</h3>
-<p><img data-src="LASSOPres_files/images/code1.png" data-fig-align="center" alt="Code 1"> <img data-src="LASSOPres_files/images/code2.png" data-fig-align="center" alt="Code 2"></p>
 <div class="cell">
-<div class="cell-output-display">
-<p><img data-src="LASSOPres_files/figure-revealjs/unnamed-chunk-4-1.png" width="960"></p>
+
 </div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>model <span class="ot">&lt;-</span> <span class="fu">cv.glmnet</span>(predictors, resp, <span class="at">alpha=</span><span class="dv">1</span>)</span>
+<span id="cb3-2"><a href="#cb3-2"></a>bestLambda <span class="ot">&lt;-</span> model<span class="sc">$</span>lambda.min</span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="co">#Optimal Lambda has been fit.</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a><span class="fu">plot</span>(model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
 </div>
-<p>The best Lambda chosen by this model was 0.0307</p>
+<img data-src="LASSOPres_files/figure-revealjs/unnamed-chunk-7-1.png" width="960" class="r-stretch"><div class="cell">
+
+</div>
+<p>The best Lambda chosen by this model was 0.0258</p>
 </section>
 <section id="human-freedom-index-high-dimension-data-5" class="slide level2">
 <h2>Human Freedom Index (High Dimension Data)</h2>
@@ -586,23 +657,28 @@ F-statistic:   NaN on 73 and 0 DF,  p-value: NA</code></pre>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>    Model Train_RSquare Train_RMSE Test_RSquare  Test_RMSE CoefficientCount
-1   LASSO     0.9990861 0.07529574    0.9975898 0.04835968                9
-2   Ridge     0.5177636 1.72966189    0.3366457 0.80227850               98
-3 ENet.25     0.9893281 0.25730724    0.9425517 0.23609728               37
-4 ENet.50     0.9966103 0.14501470    0.9895880 0.10051222               27
-5 ENet.75     0.9986033 0.09308600    0.9963633 0.05940277               13</code></pre>
+1   LASSO     0.9991154 0.06528001    0.9985217 0.05937492               14
+2   Ridge     0.5225016 1.51671199    0.2800712 1.31028149               98
+3 ENet.25     0.9834955 0.28198002    0.9499054 0.34563294               37
+4 ENet.50     0.9947128 0.15959898    0.9852699 0.18742299               29
+5 ENet.75     0.9979777 0.09870463    0.9957020 0.10124062               19</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>                        Predictor          Coefficient
-1                     (Intercept)   0.0401078164027586
-2 pf_ss_disappearances_fatalities -0.00909305838064836
-3            pf_ss_disappearances   -0.915880718232045
-4                     pf_ss_women   -0.954861233840849
-5                           pf_ss     2.85507294237358
-6          pf_religion_harassment -0.00951610883906153
-7                     pf_religion -0.00537149257383307
-8            pf_expression_killed  0.00017906595233078
-9                  ef_legal_crime   0.0423361778843404</code></pre>
+<pre><code>                         Predictor           Coefficient
+1                      (Intercept)     0.140032125128386
+2  pf_ss_disappearances_fatalities   -0.0196133621001942
+3             pf_ss_disappearances    -0.909032875724508
+4              pf_ss_women_missing  -0.00191585693668079
+5                      pf_ss_women    -0.951612121503883
+6                            pf_ss      2.84729207106464
+7           pf_religion_harassment   -0.0196151887533791
+8                      pf_religion -0.000256037945111807
+9             pf_expression_killed    0.0104415208876299
+10        pf_expression_newspapers  -0.00425748319019571
+11           ef_legal_restrictions -0.000369574913032326
+12                  ef_legal_crime    0.0320938383793796
+13               ef_trade_movement   -0.0059680490010127
+14    ef_regulation_business_start   0.00951878719305032</code></pre>
 </div>
 </div>
 <h3 id="notes">Notes</h3>
@@ -615,267 +691,213 @@ F-statistic:   NaN on 73 and 0 DF,  p-value: NA</code></pre>
 </section>
 <section id="jackson-heart-study-jhs-data" class="slide level2">
 <h2>Jackson Heart Study (JHS) Data</h2>
-<p>JHS Visit 1 dataset of 2653 observations and 198 variables</p>
-<p>For this example, we’ll model the Total Depressive Symptoms Score (depression) as the Dependent variable (y).</p>
+<ul>
+<li><p>community-based, observational study</p></li>
+<li><p>urban and rural areas of the three counties (Jackson Miss)</p></li>
+<li><p>4 recruitment pools: random, 17%; volunteer, 22%; currently enrolled in the Atherosclerosis Risk in Communities (ARIC) Study, 30% and secondary family members, 31%.</p></li>
+<li><p>African Americans 35-84 years (old including family 21 to 34 years)</p></li>
+<li><p>The final cohort of 5,306 participants includes 6.59% of all African American Jackson MSA residents aged 35-84 (N-76,426, US Census 2000).</p></li>
+<li><p>medical history, physical examination, labs and interview questions</p></li>
+<li><p>12-month intervals (Exam 1, baseline)</p></li>
+</ul>
+</section>
+<section id="jhs-data-violates-assumptions" class="slide level2">
+<h2>JHS Data Violates Assumptions</h2>
+<p><a href="https://www.jacksonheartstudy.org" class="uri">https://www.jacksonheartstudy.org</a> for more info</p>
+<p>Our JHS Visit 1 dataset : 2653 observations and 198 variables</p>
+<p>We modeled the Total Depressive Symptoms Score (depression) as the Dependent variable (y)</p>
+<p>Excluded NA’s, non-numeric &amp; categorical data, some redundant variables were omitted</p>
 <div class="cell">
-
+<div class="cell-output-display">
+<p><img data-src="LASSOPres_files/figure-revealjs/unnamed-chunk-16-1.png" width="960"></p>
 </div>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>
-Call:
-lm(formula = depression ~ ., data = LM_Data)
-
-Residuals:
-     Min       1Q   Median       3Q      Max 
--20.4277  -4.3222  -0.7683   3.5879  26.5590 
-
-Coefficients:
-                  Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)      1.179e+01  2.504e+00   4.710 2.60e-06 ***
-fasthours        4.258e-02  4.184e-02   1.018  0.30892    
-age             -9.298e-03  2.092e-02  -0.444  0.65683    
-alc             -6.498e-01  2.656e-01  -2.447  0.01447 *  
-bmi             -2.750e-02  9.015e-02  -0.305  0.76034    
-weight           1.447e-02  3.035e-02   0.477  0.63365    
-neck            -8.299e-02  5.616e-02  -1.478  0.13961    
-betablkmeds      1.114e+00  4.135e-01   2.694  0.00710 ** 
-diureticmeds    -3.010e-01  3.082e-01  -0.977  0.32884    
-dmmedtype        5.354e-02  2.875e-01   0.186  0.85228    
-fastinginsulin   2.660e-03  1.368e-02   0.195  0.84578    
-homa_ir          6.290e-02  4.183e-02   1.504  0.13279    
-aldosterone     -6.356e-02  3.132e-02  -2.029  0.04251 *  
-adiponectin     -1.265e-04  3.875e-05  -3.265  0.00111 ** 
-maneuvers       -2.561e-01  8.923e-02  -2.871  0.00413 ** 
-asthma          -3.586e-01  2.701e-01  -1.328  0.18439    
-fev1            -2.476e+00  8.366e-01  -2.960  0.00310 ** 
-fev6             8.765e-01  4.569e-01   1.919  0.05515 .  
-fev1pp           3.771e-02  1.853e-02   2.036  0.04189 *  
-systlvdia        2.188e-02  3.237e-02   0.676  0.49918    
-lvmecho          8.973e-03  4.363e-03   2.057  0.03983 *  
-repolarant       1.794e+00  7.903e-01   2.270  0.02331 *  
-repolarantlat   -1.188e+00  8.000e-01  -1.485  0.13765    
-minorscarantlat  2.424e+00  1.223e+00   1.983  0.04751 *  
-miecg           -1.948e+00  8.510e-01  -2.290  0.02212 *  
-visionlossever   3.335e+00  7.043e-01   4.735 2.31e-06 ***
-hsgrad          -2.894e+00  3.901e-01  -7.420 1.57e-13 ***
-dailydiscr       4.442e-01  1.484e-01   2.995  0.00277 ** 
-lifetimediscrm  -3.244e-01  7.311e-02  -4.437 9.51e-06 ***
-discrmburden     1.294e+00  1.928e-01   6.709 2.39e-11 ***
-perceivedstress  3.535e-01  3.420e-02  10.338  &lt; 2e-16 ***
-weeklystress     3.525e-02  1.789e-03  19.702  &lt; 2e-16 ***
-vitamind2       -1.508e-01  3.408e-02  -4.423 1.01e-05 ***
-vitamind3       -4.409e-02  2.217e-02  -1.989  0.04683 *  
-darkgrnveg      -4.497e-01  1.756e-01  -2.560  0.01051 *  
-nbpctresiden1mi -2.677e+00  1.172e+00  -2.284  0.02248 *  
-sportindex      -1.042e-01  1.070e-01  -0.974  0.33016    
-hyindex         -6.040e-01  2.118e-01  -2.852  0.00438 ** 
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-Residual standard error: 6.437 on 2615 degrees of freedom
-Multiple R-squared:  0.3222,    Adjusted R-squared:  0.3126 
-F-statistic: 33.59 on 37 and 2615 DF,  p-value: &lt; 2.2e-16</code></pre>
+<div class="cell-output-display">
+<p><img data-src="LASSOPres_files/figure-revealjs/unnamed-chunk-16-2.png" width="960"></p>
 </div>
 </div>
 </section>
-<section id="jhs-residuals" class="slide level2">
-<h2>JHS: Residuals</h2>
-
-<img data-src="LASSOPres_files/figure-revealjs/unnamed-chunk-11-1.png" width="960" class="r-stretch"></section>
-<section id="jhs-heavy-tailsnonparametric" class="slide level2">
-<h2>JHS: Heavy Tails/Nonparametric</h2>
-
-<img data-src="LASSOPres_files/figure-revealjs/unnamed-chunk-12-1.png" width="960" class="r-stretch"></section>
-<section id="correlation-matrix-heat-maphigh-multicollinearity-for-jhs" class="slide level2">
-<h2><strong>Correlation Matrix heat map:high multicollinearity for JHS</strong></h2>
+<section id="correlation-matrix-heat-map-high-multicollinearity" class="slide level2">
+<h2><strong>Correlation Matrix heat map: high multicollinearity</strong></h2>
 <ul>
 <li>2 or more predictor variables strongly linearly dependent</li>
 <li>leads to overfitting and low prediction accuracy</li>
 </ul>
 
-<img data-src="LASSOPres_files/figure-revealjs/unnamed-chunk-13-1.png" width="960" class="r-stretch"></section>
+<img data-src="LASSOPres_files/figure-revealjs/unnamed-chunk-17-1.png" width="960" class="r-stretch"></section>
 <section id="jhs-variance-inflation-factor-vif-scores-multicollinearity" class="slide level2">
 <h2><strong>JHS Variance Inflation Factor (VIF) Scores : Multicollinearity</strong></h2>
+<ul>
+<li><p>VIF &amp; Tolerance to measure multicollinearity</p></li>
+<li><p>can use regularization to alleviate</p></li>
+</ul>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>                      VIF  Tolerance
-fasthours        1.212682 0.82461824
-age              3.863775 0.25881422
-alc              1.127314 0.88706467
-bmi             25.404431 0.03936321
-weight          25.781836 0.03878700
-neck             2.805165 0.35648530
-betablkmeds      1.116920 0.89531958
-diureticmeds     1.341139 0.74563479
-dmmedtype        1.677414 0.59615581
-fastinginsulin   1.787363 0.55948348
-homa_ir          2.135974 0.46817042
-aldosterone      1.181316 0.84651321
-adiponectin      1.252232 0.79857386
-maneuvers        1.047083 0.95503367
-asthma           1.060646 0.94282134
-fev1            20.647705 0.04843153
-fev6             8.368320 0.11949830
-fev1pp           5.982210 0.16716230
-systlvdia        1.380383 0.72443637
-lvmecho          1.650663 0.60581711
-repolarant       1.630613 0.61326636
-repolarantlat    1.685128 0.59342657
-minorscarantlat  1.035076 0.96611274
-miecg            1.074841 0.93037051
-visionlossever   1.029635 0.97121787
-hsgrad           1.184941 0.84392421
-dailydiscr       1.440257 0.69432051
-lifetimediscrm   1.509734 0.66236828
-discrmburden     1.453356 0.68806245
-perceivedstress  1.426097 0.70121465
-weeklystress     1.262405 0.79213871
-vitamind2        1.180430 0.84714901
-vitamind3        1.155496 0.86542949
-darkgrnveg       1.035485 0.96573076
-nbpctresiden1mi  1.014501 0.98570666
-sportindex       1.127815 0.88667004
-hyindex          1.080263 0.92570019</code></pre>
+fasthours        1.188521 0.84138180
+age              3.568913 0.28019737
+bmi             24.901065 0.04015892
+weight          25.258306 0.03959094
+neck             2.786419 0.35888353
+fastinginsulin   1.639202 0.61005295
+homa_ir          1.822371 0.54873567
+aldosterone      1.082467 0.92381564
+adiponectin      1.223100 0.81759437
+maneuvers        1.041429 0.96021945
+fev1            20.475477 0.04883891
+fev6             8.302533 0.12044517
+fev1pp           5.870710 0.17033716
+systlvdia        1.360866 0.73482631
+lvmecho          1.615156 0.61913537
+repolarant       1.042472 0.95925865
+dailydiscr       1.434753 0.69698402
+lifetimediscrm   1.482850 0.67437703
+discrmburden     1.447647 0.69077634
+perceivedstress  1.415018 0.70670473
+weeklystress     1.255129 0.79673067
+vitamind2        1.162054 0.86054499
+vitamind3        1.148515 0.87068991
+darkgrnveg       1.026903 0.97380174
+nbpctresiden1mi  1.009655 0.99043739
+sportindex       1.109899 0.90098308
+hyindex          1.073921 0.93116739</code></pre>
 </div>
 </div>
-</section>
-<section id="jhs-highly-multicollinear" class="slide level2">
-<h2>JHS: Highly Multicollinear</h2>
-<ul>
-<li><p>can use regularization to alleviate</p>
-<p><img data-src="LASSOPres_files/images/CorrPlot1.png"></p></li>
-</ul>
 </section>
 <section id="why-lasso-or-ridge-for-jhs" class="slide level2">
 <h2>Why LASSO or Ridge for JHS?</h2>
-<p>Modifying Regression Models with Regularization:Choosing the Penalty Term/Optimal Lambda</p>
+<p>Modifying GLM Regression Models with Regularization: Choosing the Penalty Term/Optimal Lambda</p>
 
-<img data-src="LASSOPres_files/images/L1L2Constrain.png" class="r-stretch"><p>^~James et al., 2013~^</p>
+<img data-src="LASSOPres_files/images/L1L2Constrain.png" width="589" class="r-stretch"><p>^~James et al., 2013~^</p>
 </section>
-<section id="jackson-heart-lasso-𝞪1-l1-norm" class="slide level2">
-<h2>Jackson Heart: LASSO (𝞪=1), L1 Norm</h2>
+<section id="jackson-heart-lasso-𝞪1-l1-norm-lm" class="slide level2">
+<h2>Jackson Heart: LASSO (𝞪=1), L1 Norm (lm)</h2>
 <p><strong>𝞴 x |Slope|</strong></p>
-
-<img data-src="LASSOPres_files/figure-revealjs/unnamed-chunk-15-1.png" width="960" class="r-stretch"></section>
-<section id="jackson-heart-lasso-𝞪1-l1-norm-1" class="slide level2">
-<h2>Jackson Heart: LASSO (𝞪=1), L1 Norm</h2>
 <div class="cell">
-
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.01706108</code></pre>
 </div>
+
 </div>
-<img data-src="LASSOPres_files/figure-revealjs/unnamed-chunk-16-1.png" width="960" class="r-stretch"></section>
-<section id="jackson-heart-lasso-𝞪1-l1-norm-2" class="slide level2">
+<img data-src="LASSOPres_files/figure-revealjs/unnamed-chunk-19-1.png" width="960" class="r-stretch"></section>
+<section id="jackson-heart-lasso-𝞪1-l1-norm-gamma-penalty" class="slide level2">
+<h2>Jackson Heart: LASSO (𝞪=1), L1 Norm (Gamma Penalty)</h2>
+
+<img data-src="LASSOPres_files/figure-revealjs/unnamed-chunk-20-1.png" width="960" class="r-stretch"></section>
+<section id="jackson-heart-lasso-𝞪1-l1-norm" class="slide level2">
 <h2>Jackson Heart: LASSO (𝞪=1), L1 Norm</h2>
 <p>More Variables dropped as Lambda is increased. Higest VIF’s: BMI, weight, fev1, fev6</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>38 x 4 sparse Matrix of class "dgCMatrix"
+<pre><code>28 x 4 sparse Matrix of class "dgCMatrix"
                            s1            s2            s3         s4
-(Intercept)     11.6230606453 11.8003134793  9.774987e+00 8.90651403
-fasthours        0.0401805909  0.0221992452  .            .         
-age             -0.0033769372  .             .            .         
-alc             -0.6436979740 -0.5786605342 -3.459217e-01 .         
-weight           0.0050806420  .             .            .         
-neck            -0.0849519117 -0.0620575388  .            .         
-bmi              .             0.0044773421  .            .         
-betablkmeds      1.0938112606  0.9652874518  5.062727e-01 .         
-diureticmeds    -0.2932828972 -0.1606548305  .            .         
-dmmedtype        0.0395003177  .             .            .         
-fastinginsulin   0.0028613040  0.0006021704  .            .         
-homa_ir          0.0618836900  0.0497851126  1.077804e-02 .         
-aldosterone     -0.0628926739 -0.0588272084 -2.378336e-02 .         
-adiponectin     -0.0001240801 -0.0001059648 -2.934231e-05 .         
-maneuvers       -0.2539918179 -0.2271307004 -7.220859e-02 .         
-asthma          -0.3465436594 -0.2392690173  .            .         
-fev1            -2.1545368017 -1.0917107618 -6.945854e-01 .         
-fev6             0.7810385866  0.0001025793  .            .         
-fev1pp           0.0315362178  0.0204248502  .            .         
-systlvdia        0.0209257231  0.0134256356  .            .         
-lvmecho          0.0088479238  0.0072229539  3.404011e-05 .         
-repolarant       1.7460445901  1.2636084359  2.105420e-01 .         
-repolarantlat   -1.1418288878 -0.6283595067  .            .         
-minorscarantlat  2.3730789716  2.0305106661  1.791937e-01 .         
-miecg           -1.9213260598 -1.6230359154 -2.179383e-01 .         
-visionlossever   3.3081028611  3.0937179146  2.226067e+00 .         
-hsgrad          -2.8776632456 -2.8336295133 -2.610422e+00 .         
-dailydiscr       0.4411514091  0.4013413032  2.065006e-01 .         
-lifetimediscrm  -0.3201229844 -0.2742916770 -9.741725e-02 .         
-discrmburden     1.2814294253  1.2078649193  9.248893e-01 .         
-perceivedstress  0.3535245695  0.3453609542  3.164533e-01 0.03490093
-weeklystress     0.0352448908  0.0349446264  3.336982e-02 0.01748180
-vitamind2       -0.1507420304 -0.1399991667 -8.619619e-02 .         
-vitamind3       -0.0442741944 -0.0384645535 -1.221080e-02 .         
-darkgrnveg      -0.4460293677 -0.4068817491 -2.406595e-01 .         
-nbpctresiden1mi -2.6196532199 -2.1372823143 -3.961116e-01 .         
-sportindex      -0.1019961675 -0.0980407851 -8.245518e-02 .         
-hyindex         -0.5982244245 -0.5212958234 -2.318000e-01 .         </code></pre>
+(Intercept)      7.2345149003  7.2459049017  6.848887e+00 8.90651403
+fasthours        0.0154461464  0.0152448395  .            .         
+age              0.0294692360  0.0294523061  1.534655e-02 .         
+weight          -0.0003486204 -0.0002235076  .            .         
+neck            -0.0802404801 -0.0801305475  .            .         
+bmi              0.0176598946  0.0172365464  .            .         
+fastinginsulin   .             .             .            .         
+homa_ir          0.0769312162  0.0767433347  3.154321e-02 .         
+aldosterone     -0.0769100321 -0.0767902446 -2.957659e-02 .         
+adiponectin     -0.0001319057 -0.0001316802 -3.294485e-05 .         
+maneuvers       -0.2244008025 -0.2240688762 -5.615308e-02 .         
+fev1            -2.2973308326 -2.2875351182 -9.139340e-01 .         
+fev6             0.8544463757  0.8453467676  .            .         
+fev1pp           0.0294494797  0.0293728050  .            .         
+systlvdia        0.0297145057  0.0295980167  .            .         
+lvmecho          0.0094064967  0.0093893245  2.359884e-03 .         
+repolarant       0.7832952819  0.7812949863  2.800755e-02 .         
+dailydiscr       0.4530345435  0.4525273816  2.069868e-01 .         
+lifetimediscrm  -0.3721296256 -0.3716080447 -1.498073e-01 .         
+discrmburden     1.2546678330  1.2538556240  9.388093e-01 .         
+perceivedstress  0.3628097188  0.3627009630  3.189234e-01 0.03490093
+weeklystress     0.0357205030  0.0357163256  3.367176e-02 0.01748180
+vitamind2       -0.1575349620 -0.1574013669 -8.756903e-02 .         
+vitamind3       -0.0375289601 -0.0374455305 -2.373674e-03 .         
+darkgrnveg      -0.5475706606 -0.5469427359 -2.987594e-01 .         
+nbpctresiden1mi -2.3216189470 -2.3158216563 -2.587417e-01 .         
+sportindex      -0.2061629220 -0.2060748625 -1.770642e-01 .         
+hyindex         -0.5348653007 -0.5338788958 -2.072302e-01 .         </code></pre>
 </div>
+<div class="cell-output cell-output-stdout">
+<pre><code>28 x 1 sparse Matrix of class "dgCMatrix"
+                        seg98
+intercept        7.6329993761
+fasthours        .           
+age              0.0295323517
+weight           .           
+neck            -0.0585369916
+bmi              0.0083291197
+fastinginsulin   .           
+homa_ir          0.0620299899
+aldosterone     -0.0696243295
+adiponectin     -0.0001134787
+maneuvers       -0.2022202749
+fev1            -1.3898047770
+fev6             0.1134357126
+fev1pp           0.0210480852
+systlvdia        0.0209442461
+lvmecho          0.0082265477
+repolarant       0.6409902329
+dailydiscr       0.4141812277
+lifetimediscrm  -0.3302055600
+discrmburden     1.1933042835
+perceivedstress  0.3543489023
+weeklystress     0.0354432229
+vitamind2       -0.1476014005
+vitamind3       -0.0314387070
+darkgrnveg      -0.5002041480
+nbpctresiden1mi -1.9042590942
+sportindex      -0.2007458764
+hyindex         -0.4680910427</code></pre>
 </div>
-<div class="cell">
-
 </div>
 </section>
 <section id="jackson-heart-ridge-𝞪0-l2-norm" class="slide level2">
 <h2>Jackson Heart: Ridge (𝞪=0), L2 Norm</h2>
 <p><strong>𝞴 x Slope<sup>2</sup></strong></p>
-
-<img data-src="LASSOPres_files/figure-revealjs/unnamed-chunk-19-1.png" width="960" class="r-stretch"></section>
-<section id="jackson-heart-ridge-𝞪0-l2-norm-1" class="slide level2">
-<h2>Jackson Heart: Ridge (𝞪=0), L2 Norm</h2>
 <div class="cell">
-
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.3427968</code></pre>
 </div>
+
 </div>
-<img data-src="LASSOPres_files/figure-revealjs/unnamed-chunk-20-1.png" width="960" class="r-stretch"></section>
-<section id="jackson-heart-ridge-𝞪0-l2-norm-2" class="slide level2">
+<img data-src="LASSOPres_files/figure-revealjs/unnamed-chunk-23-1.png" width="960" class="r-stretch"></section>
+<section id="jackson-heart-ridge-𝞪0-l2-norm-1" class="slide level2">
 <h2>Jackson Heart: Ridge (𝞪=0), L2 Norm</h2>
+<p>No Variables dropped as Lambda is increased. Higest VIF’s: BMI, weight, fev1, fev6</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>38 x 4 sparse Matrix of class "dgCMatrix"
+<pre><code>28 x 4 sparse Matrix of class "dgCMatrix"
                            s1            s2            s3            s4
-(Intercept)     11.8736987526 11.8736987526  1.164994e+01  1.058053e+01
-fasthours        0.0387296397  0.0387296397  1.891200e-02 -3.342393e-03
-age              0.0041412183  0.0041412183  1.087653e-03 -3.127542e-03
-alc             -0.6129989494 -0.6129989494 -4.192965e-01 -8.228652e-02
-weight          -0.0043837691 -0.0043837691 -3.564963e-03 -5.247251e-04
-neck            -0.0953528763 -0.0953528763 -6.991561e-02 -1.932122e-02
-bmi              0.0283502234  0.0283502234  2.080450e-02  7.736275e-03
-betablkmeds      1.0665310322  1.0665310322  8.225177e-01  2.531375e-01
-diureticmeds    -0.2611450156 -0.2611450156 -1.001608e-01  2.329829e-02
-dmmedtype        0.0384141377  0.0384141377  5.156342e-02  4.215292e-02
-fastinginsulin   0.0036048924  0.0036048924  3.456452e-03  2.197126e-03
-homa_ir          0.0598899985  0.0598899985  4.362141e-02  1.561855e-02
-aldosterone     -0.0615544008 -0.0615544008 -4.805897e-02 -1.322596e-02
-adiponectin     -0.0001138426 -0.0001138426 -6.723783e-05 -1.026681e-05
-maneuvers       -0.2434010011 -0.2434010011 -1.541873e-01 -3.033165e-02
-asthma          -0.3185578254 -0.3185578254 -1.987825e-01 -9.136432e-03
-fev1            -1.2987194116 -1.2987194116 -5.396924e-01 -1.711151e-01
-fev6             0.3346973236  0.3346973236 -1.463674e-01 -1.098751e-01
-fev1pp           0.0196947759  0.0196947759  7.087327e-03 -1.815942e-03
-systlvdia        0.0202335562  0.0202335562  1.836493e-02  6.865943e-03
-lvmecho          0.0081168260  0.0081168260  4.622221e-03  7.504853e-04
-repolarant       1.6545341247  1.6545341247  1.084984e+00  3.123318e-01
-repolarantlat   -1.0298207220 -1.0298207220 -4.326748e-01  1.027163e-02
-minorscarantlat  2.2966006095  2.2966006095  1.704542e+00  4.621556e-01
-miecg           -1.8580597682 -1.8580597682 -1.372282e+00 -3.955785e-01
-visionlossever   3.1906056815  3.1906056815  2.450342e+00  7.958500e-01
-hsgrad          -2.7983670552 -2.7983670552 -2.204308e+00 -6.421021e-01
-dailydiscr       0.4556177172  0.4556177172  4.732922e-01  2.572361e-01
-lifetimediscrm  -0.2906328739 -0.2906328739 -1.399118e-01  2.096987e-02
-discrmburden     1.2273350915  1.2273350915  9.569914e-01  3.757719e-01
-perceivedstress  0.3441468127  0.3441468127  2.834614e-01  1.058790e-01
-weeklystress     0.0338371628  0.0338371628  2.581305e-02  8.183973e-03
-vitamind2       -0.1451813496 -0.1451813496 -1.056084e-01 -3.188763e-02
-vitamind3       -0.0435475243 -0.0435475243 -3.394029e-02 -1.328278e-02
-darkgrnveg      -0.4300623402 -0.4300623402 -3.231009e-01 -8.435898e-02
-nbpctresiden1mi -2.4550841460 -2.4550841460 -1.631362e+00 -3.248684e-01
-sportindex      -0.1162288479 -0.1162288479 -1.580864e-01 -8.371125e-02
-hyindex         -0.5576906433 -0.5576906433 -3.391350e-01 -5.537852e-02</code></pre>
+(Intercept)      7.6838568876  7.6838568876  8.907952e+00  1.001778e+01
+fasthours        0.0157025405  0.0157025405  4.486646e-03 -5.159435e-03
+age              0.0349590168  0.0349590168  1.730288e-02 -1.597051e-03
+weight          -0.0098631165 -0.0098631165 -4.290117e-03 -5.102981e-04
+neck            -0.0896506934 -0.0896506934 -6.479530e-02 -1.862187e-02
+bmi              0.0454350925  0.0454350925  2.330912e-02  8.125509e-03
+fastinginsulin   0.0004673904  0.0004673904  2.477337e-03  2.486012e-03
+homa_ir          0.0753171705  0.0753171705  5.633841e-02  1.786670e-02
+aldosterone     -0.0737576218 -0.0737576218 -5.280199e-02 -1.305992e-02
+adiponectin     -0.0001207994 -0.0001207994 -6.904432e-05 -1.006363e-05
+maneuvers       -0.2171249694 -0.2171249694 -1.415038e-01 -2.988101e-02
+fev1            -1.4025579610 -1.4025579610 -6.362651e-01 -1.865613e-01
+fev6             0.3675461280  0.3675461280 -1.840791e-01 -1.205613e-01
+fev1pp           0.0176465103  0.0176465103  6.873797e-03 -2.018172e-03
+systlvdia        0.0281225448  0.0281225448  2.190778e-02  7.164497e-03
+lvmecho          0.0087858271  0.0087858271  5.512297e-03  8.905388e-04
+repolarant       0.8120095406  0.8120095406  7.866363e-01  3.130554e-01
+dailydiscr       0.4636784899  0.4636784899  4.665206e-01  2.544228e-01
+lifetimediscrm  -0.3381711135 -0.3381711135 -1.668925e-01  1.851966e-02
+discrmburden     1.2046635052  1.2046635052  9.543111e-01  3.762709e-01
+perceivedstress  0.3521461677  0.3521461677  2.849980e-01  1.054465e-01
+weeklystress     0.0342703451  0.0342703451  2.600131e-02  8.179048e-03
+vitamind2       -0.1512198181 -0.1512198181 -1.068165e-01 -3.151066e-02
+vitamind3       -0.0370255466 -0.0370255466 -2.850811e-02 -1.266274e-02
+darkgrnveg      -0.5220141551 -0.5220141551 -3.708532e-01 -8.747537e-02
+nbpctresiden1mi -2.1801534398 -2.1801534398 -1.496040e+00 -3.180580e-01
+sportindex      -0.2140135553 -0.2140135553 -2.199774e-01 -9.021032e-02
+hyindex         -0.5018864563 -0.5018864563 -3.195526e-01 -5.744787e-02</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -884,22 +906,35 @@ hyindex         -0.5576906433 -0.5576906433 -3.391350e-01 -5.537852e-02</code></
 </section>
 <section id="jackson-heart-comparing-models" class="slide level2">
 <h2>Jackson Heart: Comparing Models</h2>
-
-<img data-src="LASSOPres_files/images/Comp_Table.png" class="r-stretch"></section>
-<section id="jackson-heart-comparing-models-1" class="slide level2">
-<h2>Jackson Heart: Comparing Models</h2>
+<p>LASSO &gt;Elastic Net&gt;OLS&gt;Ridge</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>           RMSE     R-squared
-LASSO      6.258773 0.3176259
-Ridge      6.264094 0.3164652
-ElasticNet 6.258926 0.3175927
-OLS        6.260734 0.3171982</code></pre>
+LASSO      6.305145 0.3074768
+Ridge      6.313302 0.3056838
+ElasticNet 6.30564  0.3073681
+OLS        6.305874 0.3073168</code></pre>
 </div>
 </div>
 </section>
 <section id="summary-and-conclusion" class="slide level2">
 <h2>Summary and Conclusion</h2>
+
+<img data-src="LASSOPres_files/images/Comp_Table.png" width="487" class="r-stretch"><ul>
+<li><p>Ridge Regression and Lasso Regression are modifications of the General Linear Model, adding bias with a penalty term to compensate for overfitting</p></li>
+<li><p>Regularization is tolerant to multicollinearity</p></li>
+<li><p>LASSO can be used in feature selection</p></li>
+<li><p>All models have their limitations</p></li>
+</ul>
+</section>
+<section id="future-directions" class="slide level2">
+<h2><strong>Future Directions</strong></h2>
+<ul>
+<li><p><em>Group LASSO</em> : Yuan, M. and Lin, Y. (2007) Model Selection and Estimation in the Gaussian Graphical Model. Biometrika, 94, 19-35. <a href="https://doi.org/10.1093/biomet/asm018" class="uri">https://doi.org/10.1093/biomet/asm018</a></p></li>
+<li><p><em>Adaptive LASSO:</em> Hui Zou (2006) The Adaptive Lasso and Its Oracle Properties, Journal of the American Statistical Association, 101:476, 1418-1429 <a href="https://doi.org/10.1198/016214506000000735" class="uri">https://doi.org/10.1198/016214506000000735</a></p></li>
+<li><p><em>LARS:</em> Least Angle Regression, Lasso and Forward Stagewise <a href="https://www.rdocumentation.org/packages/lars/versions/1.3">lars package - RDocumentation</a></p></li>
+<li><p><em>LASSO +different distributions (gamma) and Gzlm/GLM</em></p></li>
+</ul>
 <div class="footer footer-default">
 
 </div>
