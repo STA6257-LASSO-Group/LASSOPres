@@ -378,11 +378,240 @@
 <li><p>Elastic net uses a balance of both the <span class="math inline">\(\lambda _{Ridge}\)</span> and <span class="math inline">\(\lambda _{LASSO}\)</span></p></li>
 </ul>
 </section>
-<section id="dataset-overview" class="slide level2">
-<h2>Dataset Overview</h2>
+<section id="general-process-for-regularization-modeling" class="slide level2">
+<h2>General Process for Regularization Modeling</h2>
+<ul>
+<li>The GLMNET package in R will be used to perform the modeling.</li>
+<li>More information on the package can be found <a href="https://glmnet.stanford.edu/articles/glmnet.html">here</a></li>
+<li>First an optimal Lambda needs to be found. There are a lot of techniques for this, but GLMNET provides a built in cross-fold validation method.</li>
+<li><img data-src="LASSOPres_files/images/LASSOLambda.png"><img data-src="LASSOPres_files/images/LASSOLambda2.png"></li>
+<li>The alpha parameter controls whether or not it is a Ridge, LASSO, or Elastic Net Implementation.</li>
+<li>This function returns an entire group of models, not just one.</li>
+</ul>
 </section>
-<section id="jackson-heart-traditional-ols-regression" class="slide level2">
-<h2>Jackson Heart Traditional OLS Regression</h2>
+<section id="general-process-for-regularization-modeling-1" class="slide level2">
+<h2>General Process for Regularization Modeling</h2>
+<ul>
+<li>Once optimal Lambda is found, it is passed into a final model using the non-cv glmnet function.</li>
+<li><img data-src="LASSOPres_files/images/LASSOFinal.png"></li>
+<li>This function returns a single model that can be used for predictions, etc.</li>
+<li>The GLMNET package contains options for fitting penalized models for many other generalized linear models such as Logistic Regression and Poisson Regression.</li>
+</ul>
+</section>
+<section id="human-freedom-index-high-dimension-data" class="slide level2">
+<h2>Human Freedom Index (High Dimension Data)</h2>
+<h3 id="data-overview">Data Overview</h3>
+<ul>
+<li>The Human Freedom Index from the openintro R package</li>
+<li>This data consists of sociological measures of the different types of freedom. The main dataset has 1458 observations with 123 variables</li>
+<li>For this example, a single year of complete observations will be used, resulting in 93 observations across 99 variables.</li>
+<li>Mimics the situation if a researcher attempted to analyze the most recent year of data in isolation.</li>
+<li>Each column being examined in this data set is a continuous numerical variable.</li>
+<li>Some variables have high degrees of collinearity because of their relation to one another. For example, total disappearances is expected to have high collinearity with total violent disappearances.</li>
+</ul>
+</section>
+<section id="human-freedom-index-high-dimension-data-1" class="slide level2">
+<h2>Human Freedom Index (High Dimension Data)</h2>
+<h3 id="modeling-method">Modeling Method</h3>
+<ul>
+<li>pf_ss_homicide (homicide rate) will be the response variable.</li>
+<li>The remaining 98 variables will be the predictors (excluding any indexes or total scores).</li>
+<li>The data will be randomly split 80/20 into testing and training sets.</li>
+<li>The training sets will be further validated using the GLMNET cross-fold validation functions.</li>
+</ul>
+<h3 id="what-the-data-looks-like">What the Data Looks Like</h3>
+<div class="cell">
+
+</div>
+<div class="cell">
+<div class="cell-output-display">
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":["pf_rol"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["pf_ss_homicide"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["pf_ss_disappearances_disap"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["pf_ss_disappearances_violent"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["pf_ss_disappearances_organized"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["pf_ss_disappearances_fatalities"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["pf_ss_disappearances_injuries"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["pf_ss_disappearances"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["pf_ss_women_fgm"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["pf_ss_women_missing"],"name":[10],"type":["dbl"],"align":["right"]},{"label":["pf_ss_women_inheritance"],"name":[11],"type":["dbl"],"align":["right"]},{"label":["pf_ss_women"],"name":[12],"type":["dbl"],"align":["right"]},{"label":["pf_ss"],"name":[13],"type":["dbl"],"align":["right"]},{"label":["pf_movement_domestic"],"name":[14],"type":["dbl"],"align":["right"]},{"label":["pf_movement_foreign"],"name":[15],"type":["dbl"],"align":["right"]},{"label":["pf_movement_women"],"name":[16],"type":["dbl"],"align":["right"]},{"label":["pf_movement"],"name":[17],"type":["dbl"],"align":["right"]},{"label":["pf_religion_estop"],"name":[18],"type":["dbl"],"align":["right"]},{"label":["pf_religion_harassment"],"name":[19],"type":["dbl"],"align":["right"]},{"label":["pf_religion_restrictions"],"name":[20],"type":["dbl"],"align":["right"]},{"label":["pf_religion"],"name":[21],"type":["dbl"],"align":["right"]},{"label":["pf_association_association"],"name":[22],"type":["dbl"],"align":["right"]},{"label":["pf_association_assembly"],"name":[23],"type":["dbl"],"align":["right"]},{"label":["pf_association_political"],"name":[24],"type":["dbl"],"align":["right"]},{"label":["pf_association_prof"],"name":[25],"type":["dbl"],"align":["right"]},{"label":["pf_association_sport"],"name":[26],"type":["dbl"],"align":["right"]},{"label":["pf_association"],"name":[27],"type":["dbl"],"align":["right"]},{"label":["pf_expression_killed"],"name":[28],"type":["dbl"],"align":["right"]},{"label":["pf_expression_jailed"],"name":[29],"type":["dbl"],"align":["right"]},{"label":["pf_expression_influence"],"name":[30],"type":["dbl"],"align":["right"]},{"label":["pf_expression_control"],"name":[31],"type":["dbl"],"align":["right"]},{"label":["pf_expression_cable"],"name":[32],"type":["dbl"],"align":["right"]},{"label":["pf_expression_newspapers"],"name":[33],"type":["dbl"],"align":["right"]},{"label":["pf_expression_internet"],"name":[34],"type":["dbl"],"align":["right"]},{"label":["pf_expression"],"name":[35],"type":["dbl"],"align":["right"]},{"label":["pf_identity_parental_marriage"],"name":[36],"type":["dbl"],"align":["right"]},{"label":["pf_identity_parental_divorce"],"name":[37],"type":["dbl"],"align":["right"]},{"label":["pf_identity_parental"],"name":[38],"type":["dbl"],"align":["right"]},{"label":["pf_identity_sex_male"],"name":[39],"type":["dbl"],"align":["right"]},{"label":["pf_identity_sex_female"],"name":[40],"type":["dbl"],"align":["right"]},{"label":["pf_identity_sex"],"name":[41],"type":["dbl"],"align":["right"]},{"label":["pf_identity"],"name":[42],"type":["dbl"],"align":["right"]},{"label":["ef_government_consumption"],"name":[43],"type":["dbl"],"align":["right"]},{"label":["ef_government_transfers"],"name":[44],"type":["dbl"],"align":["right"]},{"label":["ef_government_enterprises"],"name":[45],"type":["dbl"],"align":["right"]},{"label":["ef_government_tax_income"],"name":[46],"type":["dbl"],"align":["right"]},{"label":["ef_government_tax_payroll"],"name":[47],"type":["dbl"],"align":["right"]},{"label":["ef_government_tax"],"name":[48],"type":["dbl"],"align":["right"]},{"label":["ef_government"],"name":[49],"type":["dbl"],"align":["right"]},{"label":["ef_legal_judicial"],"name":[50],"type":["dbl"],"align":["right"]},{"label":["ef_legal_courts"],"name":[51],"type":["dbl"],"align":["right"]},{"label":["ef_legal_protection"],"name":[52],"type":["dbl"],"align":["right"]},{"label":["ef_legal_military"],"name":[53],"type":["dbl"],"align":["right"]},{"label":["ef_legal_integrity"],"name":[54],"type":["dbl"],"align":["right"]},{"label":["ef_legal_enforcement"],"name":[55],"type":["dbl"],"align":["right"]},{"label":["ef_legal_restrictions"],"name":[56],"type":["dbl"],"align":["right"]},{"label":["ef_legal_police"],"name":[57],"type":["dbl"],"align":["right"]},{"label":["ef_legal_crime"],"name":[58],"type":["dbl"],"align":["right"]},{"label":["ef_legal_gender"],"name":[59],"type":["dbl"],"align":["right"]},{"label":["ef_legal"],"name":[60],"type":["dbl"],"align":["right"]},{"label":["ef_money_growth"],"name":[61],"type":["dbl"],"align":["right"]},{"label":["ef_money_sd"],"name":[62],"type":["dbl"],"align":["right"]},{"label":["ef_money_inflation"],"name":[63],"type":["dbl"],"align":["right"]},{"label":["ef_money_currency"],"name":[64],"type":["dbl"],"align":["right"]},{"label":["ef_money"],"name":[65],"type":["dbl"],"align":["right"]},{"label":["ef_trade_tariffs_revenue"],"name":[66],"type":["dbl"],"align":["right"]},{"label":["ef_trade_tariffs_mean"],"name":[67],"type":["dbl"],"align":["right"]},{"label":["ef_trade_tariffs_sd"],"name":[68],"type":["dbl"],"align":["right"]},{"label":["ef_trade_tariffs"],"name":[69],"type":["dbl"],"align":["right"]},{"label":["ef_trade_regulatory_nontariff"],"name":[70],"type":["dbl"],"align":["right"]},{"label":["ef_trade_regulatory_compliance"],"name":[71],"type":["dbl"],"align":["right"]},{"label":["ef_trade_regulatory"],"name":[72],"type":["dbl"],"align":["right"]},{"label":["ef_trade_black"],"name":[73],"type":["dbl"],"align":["right"]},{"label":["ef_trade_movement_foreign"],"name":[74],"type":["dbl"],"align":["right"]},{"label":["ef_trade_movement_capital"],"name":[75],"type":["dbl"],"align":["right"]},{"label":["ef_trade_movement_visit"],"name":[76],"type":["dbl"],"align":["right"]},{"label":["ef_trade_movement"],"name":[77],"type":["dbl"],"align":["right"]},{"label":["ef_trade"],"name":[78],"type":["dbl"],"align":["right"]},{"label":["ef_regulation_credit_ownership"],"name":[79],"type":["dbl"],"align":["right"]},{"label":["ef_regulation_credit_private"],"name":[80],"type":["dbl"],"align":["right"]},{"label":["ef_regulation_credit_interest"],"name":[81],"type":["dbl"],"align":["right"]},{"label":["ef_regulation_credit"],"name":[82],"type":["dbl"],"align":["right"]},{"label":["ef_regulation_labor_minwage"],"name":[83],"type":["dbl"],"align":["right"]},{"label":["ef_regulation_labor_firing"],"name":[84],"type":["dbl"],"align":["right"]},{"label":["ef_regulation_labor_bargain"],"name":[85],"type":["dbl"],"align":["right"]},{"label":["ef_regulation_labor_hours"],"name":[86],"type":["dbl"],"align":["right"]},{"label":["ef_regulation_labor_dismissal"],"name":[87],"type":["dbl"],"align":["right"]},{"label":["ef_regulation_labor_conscription"],"name":[88],"type":["dbl"],"align":["right"]},{"label":["ef_regulation_labor"],"name":[89],"type":["dbl"],"align":["right"]},{"label":["ef_regulation_business_adm"],"name":[90],"type":["dbl"],"align":["right"]},{"label":["ef_regulation_business_bureaucracy"],"name":[91],"type":["dbl"],"align":["right"]},{"label":["ef_regulation_business_start"],"name":[92],"type":["dbl"],"align":["right"]},{"label":["ef_regulation_business_bribes"],"name":[93],"type":["dbl"],"align":["right"]},{"label":["ef_regulation_business_licensing"],"name":[94],"type":["dbl"],"align":["right"]},{"label":["ef_regulation_business_compliance"],"name":[95],"type":["dbl"],"align":["right"]},{"label":["ef_regulation_business"],"name":[96],"type":["dbl"],"align":["right"]},{"label":["ef_regulation"],"name":[97],"type":["dbl"],"align":["right"]},{"label":["hf_score"],"name":[98],"type":["dbl"],"align":["right"]},{"label":["id"],"name":[99],"type":["int"],"align":["right"]}],"data":[{"1":"5.291752","2":"8.920429","3":"10","4":"10.00000","5":"10","6":"10.000000","7":"10.000000","8":"10.00000","9":"10","10":"7.5","11":"5","12":"7.500000","13":"8.806810","14":"5","15":"10","16":"5","17":"6.666667","18":"10","19":"9.566667","20":"8.011111","21":"9.192593","22":"10","23":"10","24":"10","25":"10","26":"10","27":"10","28":"10","29":"10","30":"5.000000","31":"5.25","32":"10","33":"10.0","34":"10.0","35":"8.607143","36":"10","37":"10","38":"10.0","39":"10","40":"10","41":"10","42":"6.2500000","43":"8.232353","44":"7.509902","45":"8","46":"9","47":"7","48":"8.0","49":"7.935564","50":"2.668222","51":"3.145462","52":"4.512228","53":"8.333333","54":"4.166667","55":"4.387444","56":"6.485287","57":"6.933500","58":"6.215401","59":"0.9487179","60":"5.071814","61":"8.986454","62":"9.484575","63":"9.74360","64":"10","65":"9.553657","66":"9.626667","67":"9.24","68":"8.0240","69":"8.963556","70":"5.574481","71":"9.405328","72":"7.489905","73":"10.00000","74":"6.306106","75":"4.615385","76":"8.296923","77":"6.406138","78":"8.214900","79":"5","80":"7.295687","81":"9","82":"7.098562","83":"5.566667","84":"5.396399","85":"6.234861","86":"8","87":"6.299741","88":"10","89":"6.916278","90":"6.072172","91":"6.000000","92":"9.713864","93":"4.050196","94":"7.324582","95":"7.074366","96":"6.705863","97":"6.906901","98":"7.568140","99":"1"},{"1":"3.819566","2":"9.456254","3":"10","4":"9.29403","5":"5","6":"9.926119","7":"9.990149","8":"8.84206","9":"10","10":"7.5","11":"0","12":"5.833333","13":"8.043882","14":"5","15":"5","16":"5","17":"5.000000","18":"5","19":"6.873333","20":"2.961111","21":"4.944815","22":"5","23":"5","24":"5","25":"5","26":"5","27":"5","28":"10","29":"10","30":"2.666667","31":"4.00","32":"10","33":"7.5","34":"7.5","35":"7.380952","36":"0","37":"5","38":"2.5","39":"0","40":"0","41":"0","42":"0.8333333","43":"2.150000","44":"7.817129","45":"0","46":"7","47":"2","48":"4.5","49":"3.616782","50":"4.186704","51":"4.327113","52":"4.689952","53":"4.166667","54":"5.000000","55":"4.507538","56":"6.626692","57":"6.136845","58":"6.737383","59":"0.8205128","60":"4.690743","61":"6.955962","62":"8.339152","63":"8.72046","64":"5","65":"7.253894","66":"8.480000","67":"6.22","68":"5.9176","69":"6.872533","70":"4.962589","71":"0.000000","72":"2.481294","73":"5.56391","74":"3.664829","75":"0.000000","76":"1.106256","77":"1.590362","78":"4.127025","79":"0","80":"5.301526","81":"10","82":"5.100509","83":"5.566667","84":"3.896912","85":"5.958321","86":"6","87":"7.755176","88":"1","89":"5.029513","90":"3.722341","91":"1.777778","92":"9.243070","93":"3.765515","94":"8.523503","95":"7.029528","96":"5.676956","97":"5.268992","98":"5.135886","99":"2"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+</section>
+<section id="human-freedom-index-high-dimension-data-2" class="slide level2">
+<h2>Human Freedom Index (High Dimension Data)</h2>
+<h3 id="what-happens-in-a-traditional-linear-model">What Happens in a Traditional Linear Model?</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = pf_ss_homicide ~ ., data = xtrainLin)
+
+Residuals:
+ALL 74 residuals are 0: no residual degrees of freedom!
+
+Coefficients: (24 not defined because of singularities)
+                                     Estimate Std. Error t value Pr(&gt;|t|)
+(Intercept)                         9.009e-08        NaN     NaN      NaN
+pf_rol                              2.459e-09        NaN     NaN      NaN
+pf_ss_disappearances_disap         -2.000e-01        NaN     NaN      NaN
+pf_ss_disappearances_violent       -2.000e-01        NaN     NaN      NaN
+pf_ss_disappearances_organized     -2.000e-01        NaN     NaN      NaN
+pf_ss_disappearances_fatalities    -2.000e-01        NaN     NaN      NaN
+pf_ss_disappearances_injuries      -2.000e-01        NaN     NaN      NaN
+pf_ss_disappearances                       NA         NA      NA       NA
+pf_ss_women_fgm                    -3.333e-01        NaN     NaN      NaN
+pf_ss_women_missing                -3.333e-01        NaN     NaN      NaN
+pf_ss_women_inheritance            -3.333e-01        NaN     NaN      NaN
+pf_ss_women                                NA         NA      NA       NA
+pf_ss                               3.000e+00        NaN     NaN      NaN
+pf_movement_domestic                2.505e-10        NaN     NaN      NaN
+pf_movement_foreign                -1.071e-09        NaN     NaN      NaN
+pf_movement_women                  -5.752e-10        NaN     NaN      NaN
+pf_movement                                NA         NA      NA       NA
+pf_religion_estop                  -4.339e-11        NaN     NaN      NaN
+pf_religion_harassment             -2.314e-10        NaN     NaN      NaN
+pf_religion_restrictions           -5.494e-10        NaN     NaN      NaN
+pf_religion                                NA         NA      NA       NA
+pf_association_association         -4.733e-10        NaN     NaN      NaN
+pf_association_assembly             2.921e-11        NaN     NaN      NaN
+pf_association_political           -2.309e-10        NaN     NaN      NaN
+pf_association_prof                 2.395e-10        NaN     NaN      NaN
+pf_association_sport               -1.356e-11        NaN     NaN      NaN
+pf_association                             NA         NA      NA       NA
+pf_expression_killed               -1.577e-10        NaN     NaN      NaN
+pf_expression_jailed               -2.117e-10        NaN     NaN      NaN
+pf_expression_influence            -5.308e-10        NaN     NaN      NaN
+pf_expression_control               7.550e-10        NaN     NaN      NaN
+pf_expression_cable                 1.639e-09        NaN     NaN      NaN
+pf_expression_newspapers            1.478e-09        NaN     NaN      NaN
+pf_expression_internet             -1.705e-09        NaN     NaN      NaN
+pf_expression                              NA         NA      NA       NA
+pf_identity_parental_marriage       1.693e-10        NaN     NaN      NaN
+pf_identity_parental_divorce        7.024e-10        NaN     NaN      NaN
+pf_identity_parental                       NA         NA      NA       NA
+pf_identity_sex_male               -2.907e-10        NaN     NaN      NaN
+pf_identity_sex_female             -7.849e-11        NaN     NaN      NaN
+pf_identity_sex                            NA         NA      NA       NA
+pf_identity                        -2.149e-10        NaN     NaN      NaN
+ef_government_consumption           2.238e-09        NaN     NaN      NaN
+ef_government_transfers            -1.142e-09        NaN     NaN      NaN
+ef_government_enterprises          -2.478e-10        NaN     NaN      NaN
+ef_government_tax_income           -8.920e-10        NaN     NaN      NaN
+ef_government_tax_payroll           5.231e-10        NaN     NaN      NaN
+ef_government_tax                          NA         NA      NA       NA
+ef_government                              NA         NA      NA       NA
+ef_legal_judicial                  -2.521e-09        NaN     NaN      NaN
+ef_legal_courts                    -6.174e-09        NaN     NaN      NaN
+ef_legal_protection                 7.778e-10        NaN     NaN      NaN
+ef_legal_military                  -1.390e-09        NaN     NaN      NaN
+ef_legal_integrity                 -2.541e-09        NaN     NaN      NaN
+ef_legal_enforcement               -2.342e-09        NaN     NaN      NaN
+ef_legal_restrictions              -2.179e-09        NaN     NaN      NaN
+ef_legal_police                    -4.762e-09        NaN     NaN      NaN
+ef_legal_crime                     -1.531e-09        NaN     NaN      NaN
+ef_legal_gender                    -7.819e-08        NaN     NaN      NaN
+ef_legal                            2.481e-08        NaN     NaN      NaN
+ef_money_growth                     2.386e-10        NaN     NaN      NaN
+ef_money_sd                         1.292e-09        NaN     NaN      NaN
+ef_money_inflation                  2.184e-09        NaN     NaN      NaN
+ef_money_currency                  -4.401e-10        NaN     NaN      NaN
+ef_money                                   NA         NA      NA       NA
+ef_trade_tariffs_revenue            3.638e-10        NaN     NaN      NaN
+ef_trade_tariffs_mean               7.331e-10        NaN     NaN      NaN
+ef_trade_tariffs_sd                 6.117e-10        NaN     NaN      NaN
+ef_trade_tariffs                           NA         NA      NA       NA
+ef_trade_regulatory_nontariff      -5.000e-09        NaN     NaN      NaN
+ef_trade_regulatory_compliance     -4.817e-10        NaN     NaN      NaN
+ef_trade_regulatory                        NA         NA      NA       NA
+ef_trade_black                     -1.421e-09        NaN     NaN      NaN
+ef_trade_movement_foreign           3.015e-10        NaN     NaN      NaN
+ef_trade_movement_capital           2.962e-10        NaN     NaN      NaN
+ef_trade_movement_visit            -5.608e-10        NaN     NaN      NaN
+ef_trade_movement                          NA         NA      NA       NA
+ef_trade                                   NA         NA      NA       NA
+ef_regulation_credit_ownership      9.550e-10        NaN     NaN      NaN
+ef_regulation_credit_private        6.521e-10        NaN     NaN      NaN
+ef_regulation_credit_interest      -1.641e-09        NaN     NaN      NaN
+ef_regulation_credit                       NA         NA      NA       NA
+ef_regulation_labor_minwage         7.748e-12        NaN     NaN      NaN
+ef_regulation_labor_firing         -6.921e-10        NaN     NaN      NaN
+ef_regulation_labor_bargain        -7.378e-10        NaN     NaN      NaN
+ef_regulation_labor_hours          -4.617e-10        NaN     NaN      NaN
+ef_regulation_labor_dismissal      -2.662e-10        NaN     NaN      NaN
+ef_regulation_labor_conscription    5.005e-10        NaN     NaN      NaN
+ef_regulation_labor                        NA         NA      NA       NA
+ef_regulation_business_adm          1.454e-09        NaN     NaN      NaN
+ef_regulation_business_bureaucracy  5.006e-10        NaN     NaN      NaN
+ef_regulation_business_start               NA         NA      NA       NA
+ef_regulation_business_bribes              NA         NA      NA       NA
+ef_regulation_business_licensing           NA         NA      NA       NA
+ef_regulation_business_compliance          NA         NA      NA       NA
+ef_regulation_business                     NA         NA      NA       NA
+ef_regulation                              NA         NA      NA       NA
+hf_score                                   NA         NA      NA       NA
+
+Residual standard error: NaN on 0 degrees of freedom
+Multiple R-squared:      1, Adjusted R-squared:    NaN 
+F-statistic:   NaN on 73 and 0 DF,  p-value: NA</code></pre>
+</div>
+</div>
+<p><img data-src="LASSOPres_files/images/HFIModel1.png" data-fig-align="center" alt="Model Output"> <img data-src="LASSOPres_files/images/HFModel2.png" data-fig-align="center" alt="Model Output"></p>
+<p>The model does not work because there aren’t enough degrees of freedom.</p>
+</section>
+<section id="human-freedom-index-high-dimension-data-3" class="slide level2">
+<h2>Human Freedom Index (High Dimension Data)</h2>
+<h3 id="regularization-method">Regularization Method</h3>
+<p>Each method will have a model fit. These will then have their RSquare and RMSE scores displayed to show a relative performance for each method. In the GLMNET package, alpha controls the method used. An alpha value of 1 corresponds to LASSO regression, a value of 0 corresponds to Ridge Regression, and a value in between corresponds to a form of Elastic Net Regularization.</p>
+<h3 id="basic-code-structure">Basic Code Structure</h3>
+<ul>
+<li>Perform Cross Validation to acquire the optimal lambda. The alpha term is altered based on the method.</li>
+<li>Pass the optimal lambda into a new model based on the training data.</li>
+<li>Examine the impact on the coefficients.</li>
+<li>Using the model, make predictions on the training data and the test data.</li>
+<li>Store results and display scores for each method.</li>
+</ul>
+</section>
+<section id="human-freedom-index-high-dimension-data-4" class="slide level2">
+<h2>Human Freedom Index (High Dimension Data)</h2>
+<h3 id="fitting-lasso">Fitting LASSO</h3>
+<p><img data-src="LASSOPres_files/images/code1.png" data-fig-align="center" alt="Code 1"> <img data-src="LASSOPres_files/images/code2.png" data-fig-align="center" alt="Code 2"></p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img data-src="LASSOPres_files/figure-revealjs/unnamed-chunk-4-1.png" width="960"></p>
+</div>
+</div>
+<p>The best Lambda chosen by this model was 0.0307</p>
+</section>
+<section id="human-freedom-index-high-dimension-data-5" class="slide level2">
+<h2>Human Freedom Index (High Dimension Data)</h2>
+<h3 id="results">Results</h3>
+<p>After repeating the process for Ridge, and 3 forms of Elastic Net, the end result of the modeling gives this table:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>    Model Train_RSquare Train_RMSE Test_RSquare  Test_RMSE CoefficientCount
+1   LASSO     0.9990861 0.07529574    0.9975898 0.04835968                9
+2   Ridge     0.5177636 1.72966189    0.3366457 0.80227850               98
+3 ENet.25     0.9893281 0.25730724    0.9425517 0.23609728               37
+4 ENet.50     0.9966103 0.14501470    0.9895880 0.10051222               27
+5 ENet.75     0.9986033 0.09308600    0.9963633 0.05940277               13</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                        Predictor          Coefficient
+1                     (Intercept)   0.0401078164027586
+2 pf_ss_disappearances_fatalities -0.00909305838064836
+3            pf_ss_disappearances   -0.915880718232045
+4                     pf_ss_women   -0.954861233840849
+5                           pf_ss     2.85507294237358
+6          pf_religion_harassment -0.00951610883906153
+7                     pf_religion -0.00537149257383307
+8            pf_expression_killed  0.00017906595233078
+9                  ef_legal_crime   0.0423361778843404</code></pre>
+</div>
+</div>
+<h3 id="notes">Notes</h3>
+<ul>
+<li>Pure LASSO had the best fit.</li>
+<li>The model is still potentially overfit. (10 predictors vs 92 observations)</li>
+<li>Now there are features available for a more refined linear model.</li>
+<li>“Grouped” variables still need to be adjusted for.</li>
+</ul>
 </section>
 <section id="jackson-heart-study-jhs-data" class="slide level2">
 <h2>Jackson Heart Study (JHS) Data</h2>
@@ -453,11 +682,11 @@ F-statistic: 33.59 on 37 and 2615 DF,  p-value: &lt; 2.2e-16</code></pre>
 <section id="jhs-residuals" class="slide level2">
 <h2>JHS: Residuals</h2>
 
-<img data-src="LASSOPres_files/figure-revealjs/unnamed-chunk-6-1.png" width="960" class="r-stretch"></section>
+<img data-src="LASSOPres_files/figure-revealjs/unnamed-chunk-11-1.png" width="960" class="r-stretch"></section>
 <section id="jhs-heavy-tailsnonparametric" class="slide level2">
 <h2>JHS: Heavy Tails/Nonparametric</h2>
 
-<img data-src="LASSOPres_files/figure-revealjs/unnamed-chunk-7-1.png" width="960" class="r-stretch"></section>
+<img data-src="LASSOPres_files/figure-revealjs/unnamed-chunk-12-1.png" width="960" class="r-stretch"></section>
 <section id="correlation-matrix-heat-maphigh-multicollinearity-for-jhs" class="slide level2">
 <h2><strong>Correlation Matrix heat map:high multicollinearity for JHS</strong></h2>
 <ul>
@@ -465,7 +694,7 @@ F-statistic: 33.59 on 37 and 2615 DF,  p-value: &lt; 2.2e-16</code></pre>
 <li>leads to overfitting and low prediction accuracy</li>
 </ul>
 
-<img data-src="LASSOPres_files/figure-revealjs/unnamed-chunk-8-1.png" width="960" class="r-stretch"></section>
+<img data-src="LASSOPres_files/figure-revealjs/unnamed-chunk-13-1.png" width="960" class="r-stretch"></section>
 <section id="jhs-variance-inflation-factor-vif-scores-multicollinearity" class="slide level2">
 <h2><strong>JHS Variance Inflation Factor (VIF) Scores : Multicollinearity</strong></h2>
 <div class="cell">
@@ -528,7 +757,7 @@ hyindex          1.080263 0.92570019</code></pre>
 <h2>Jackson Heart: LASSO (𝞪=1), L1 Norm</h2>
 <p><strong>𝞴 x |Slope|</strong></p>
 
-<img data-src="LASSOPres_files/figure-revealjs/unnamed-chunk-10-1.png" width="960" class="r-stretch"></section>
+<img data-src="LASSOPres_files/figure-revealjs/unnamed-chunk-15-1.png" width="960" class="r-stretch"></section>
 <section id="jackson-heart-lasso-𝞪1-l1-norm-1" class="slide level2">
 <h2>Jackson Heart: LASSO (𝞪=1), L1 Norm</h2>
 <div class="cell">
@@ -537,7 +766,7 @@ hyindex          1.080263 0.92570019</code></pre>
 <pre><code>[1] 0.01706108</code></pre>
 </div>
 </div>
-<img data-src="LASSOPres_files/figure-revealjs/unnamed-chunk-11-1.png" width="960" class="r-stretch"></section>
+<img data-src="LASSOPres_files/figure-revealjs/unnamed-chunk-16-1.png" width="960" class="r-stretch"></section>
 <section id="jackson-heart-lasso-𝞪1-l1-norm-2" class="slide level2">
 <h2>Jackson Heart: LASSO (𝞪=1), L1 Norm</h2>
 <p>More Variables dropped as Lambda is increased. Higest VIF’s: BMI, weight, fev1, fev6</p>
@@ -593,7 +822,7 @@ hyindex         -0.5982244245 -0.5212958234 -2.318000e-01 .         </code></pre
 <h2>Jackson Heart: Ridge (𝞪=0), L2 Norm</h2>
 <p><strong>𝞴 x Slope<sup>2</sup></strong></p>
 
-<img data-src="LASSOPres_files/figure-revealjs/unnamed-chunk-14-1.png" width="960" class="r-stretch"></section>
+<img data-src="LASSOPres_files/figure-revealjs/unnamed-chunk-19-1.png" width="960" class="r-stretch"></section>
 <section id="jackson-heart-ridge-𝞪0-l2-norm-1" class="slide level2">
 <h2>Jackson Heart: Ridge (𝞪=0), L2 Norm</h2>
 <div class="cell">
@@ -602,7 +831,7 @@ hyindex         -0.5982244245 -0.5212958234 -2.318000e-01 .         </code></pre
 <pre><code>[1] 0.3427968</code></pre>
 </div>
 </div>
-<img data-src="LASSOPres_files/figure-revealjs/unnamed-chunk-15-1.png" width="960" class="r-stretch"></section>
+<img data-src="LASSOPres_files/figure-revealjs/unnamed-chunk-20-1.png" width="960" class="r-stretch"></section>
 <section id="jackson-heart-ridge-𝞪0-l2-norm-2" class="slide level2">
 <h2>Jackson Heart: Ridge (𝞪=0), L2 Norm</h2>
 <div class="cell">
@@ -668,222 +897,6 @@ ElasticNet 6.258926 0.3175927
 OLS        6.260734 0.3171982</code></pre>
 </div>
 </div>
-</section>
-<section id="human-freedom-index-high-dimension-data" class="slide level2">
-<h2>Human Freedom Index (High Dimension Data)</h2>
-<h3 id="data-overview">Data Overview</h3>
-<ul>
-<li>The Human Freedom Index from the openintro R package</li>
-<li>This data consists of sociological measures of the different types of freedom. The main dataset has 1458 observations with 123 variables</li>
-<li>For this example, a single year of complete observations will be used, resuling in 93 observations across 99 variables.</li>
-<li>Mimics the situation if a researcher attempted to analyze the most recent year of data in isolation.</li>
-<li>Each column being examined in this data set is a continuous numerical variable.</li>
-<li>Some variables have high degrees of collinearity because of their relation to one another. For example, total disappearances is expected to have high collinearity with total violent disappearances.</li>
-</ul>
-</section>
-<section id="human-freedom-index-high-dimension-data-1" class="slide level2">
-<h2>Human Freedom Index (High Dimension Data)</h2>
-<h3 id="modeling-method">Modeling Method</h3>
-<ul>
-<li>pf_ss_homicide (homicide rate) will be the response variable.</li>
-<li>The remaining 98 variables will be the predictors (excluding any indexes or total scores).</li>
-<li>The GLMNET package in R will be used to perform the modeling.</li>
-<li>More information on the package can be found <a href="https://glmnet.stanford.edu/articles/glmnet.html">here</a></li>
-</ul>
-<h3 id="what-the-data-looks-like">What the Data Looks Like</h3>
-<div class="cell">
-
-</div>
-<div class="cell">
-<div class="cell-output-display">
-
-<div data-pagedtable="false">
-  <script data-pagedtable-source="" type="application/json">
-{"columns":[{"label":["pf_rol"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["pf_ss_homicide"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["pf_ss_disappearances_disap"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["pf_ss_disappearances_violent"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["pf_ss_disappearances_organized"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["pf_ss_disappearances_fatalities"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["pf_ss_disappearances_injuries"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["pf_ss_disappearances"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["pf_ss_women_fgm"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["pf_ss_women_missing"],"name":[10],"type":["dbl"],"align":["right"]},{"label":["pf_ss_women_inheritance"],"name":[11],"type":["dbl"],"align":["right"]},{"label":["pf_ss_women"],"name":[12],"type":["dbl"],"align":["right"]},{"label":["pf_ss"],"name":[13],"type":["dbl"],"align":["right"]},{"label":["pf_movement_domestic"],"name":[14],"type":["dbl"],"align":["right"]},{"label":["pf_movement_foreign"],"name":[15],"type":["dbl"],"align":["right"]},{"label":["pf_movement_women"],"name":[16],"type":["dbl"],"align":["right"]},{"label":["pf_movement"],"name":[17],"type":["dbl"],"align":["right"]},{"label":["pf_religion_estop"],"name":[18],"type":["dbl"],"align":["right"]},{"label":["pf_religion_harassment"],"name":[19],"type":["dbl"],"align":["right"]},{"label":["pf_religion_restrictions"],"name":[20],"type":["dbl"],"align":["right"]},{"label":["pf_religion"],"name":[21],"type":["dbl"],"align":["right"]},{"label":["pf_association_association"],"name":[22],"type":["dbl"],"align":["right"]},{"label":["pf_association_assembly"],"name":[23],"type":["dbl"],"align":["right"]},{"label":["pf_association_political"],"name":[24],"type":["dbl"],"align":["right"]},{"label":["pf_association_prof"],"name":[25],"type":["dbl"],"align":["right"]},{"label":["pf_association_sport"],"name":[26],"type":["dbl"],"align":["right"]},{"label":["pf_association"],"name":[27],"type":["dbl"],"align":["right"]},{"label":["pf_expression_killed"],"name":[28],"type":["dbl"],"align":["right"]},{"label":["pf_expression_jailed"],"name":[29],"type":["dbl"],"align":["right"]},{"label":["pf_expression_influence"],"name":[30],"type":["dbl"],"align":["right"]},{"label":["pf_expression_control"],"name":[31],"type":["dbl"],"align":["right"]},{"label":["pf_expression_cable"],"name":[32],"type":["dbl"],"align":["right"]},{"label":["pf_expression_newspapers"],"name":[33],"type":["dbl"],"align":["right"]},{"label":["pf_expression_internet"],"name":[34],"type":["dbl"],"align":["right"]},{"label":["pf_expression"],"name":[35],"type":["dbl"],"align":["right"]},{"label":["pf_identity_parental_marriage"],"name":[36],"type":["dbl"],"align":["right"]},{"label":["pf_identity_parental_divorce"],"name":[37],"type":["dbl"],"align":["right"]},{"label":["pf_identity_parental"],"name":[38],"type":["dbl"],"align":["right"]},{"label":["pf_identity_sex_male"],"name":[39],"type":["dbl"],"align":["right"]},{"label":["pf_identity_sex_female"],"name":[40],"type":["dbl"],"align":["right"]},{"label":["pf_identity_sex"],"name":[41],"type":["dbl"],"align":["right"]},{"label":["pf_identity"],"name":[42],"type":["dbl"],"align":["right"]},{"label":["ef_government_consumption"],"name":[43],"type":["dbl"],"align":["right"]},{"label":["ef_government_transfers"],"name":[44],"type":["dbl"],"align":["right"]},{"label":["ef_government_enterprises"],"name":[45],"type":["dbl"],"align":["right"]},{"label":["ef_government_tax_income"],"name":[46],"type":["dbl"],"align":["right"]},{"label":["ef_government_tax_payroll"],"name":[47],"type":["dbl"],"align":["right"]},{"label":["ef_government_tax"],"name":[48],"type":["dbl"],"align":["right"]},{"label":["ef_government"],"name":[49],"type":["dbl"],"align":["right"]},{"label":["ef_legal_judicial"],"name":[50],"type":["dbl"],"align":["right"]},{"label":["ef_legal_courts"],"name":[51],"type":["dbl"],"align":["right"]},{"label":["ef_legal_protection"],"name":[52],"type":["dbl"],"align":["right"]},{"label":["ef_legal_military"],"name":[53],"type":["dbl"],"align":["right"]},{"label":["ef_legal_integrity"],"name":[54],"type":["dbl"],"align":["right"]},{"label":["ef_legal_enforcement"],"name":[55],"type":["dbl"],"align":["right"]},{"label":["ef_legal_restrictions"],"name":[56],"type":["dbl"],"align":["right"]},{"label":["ef_legal_police"],"name":[57],"type":["dbl"],"align":["right"]},{"label":["ef_legal_crime"],"name":[58],"type":["dbl"],"align":["right"]},{"label":["ef_legal_gender"],"name":[59],"type":["dbl"],"align":["right"]},{"label":["ef_legal"],"name":[60],"type":["dbl"],"align":["right"]},{"label":["ef_money_growth"],"name":[61],"type":["dbl"],"align":["right"]},{"label":["ef_money_sd"],"name":[62],"type":["dbl"],"align":["right"]},{"label":["ef_money_inflation"],"name":[63],"type":["dbl"],"align":["right"]},{"label":["ef_money_currency"],"name":[64],"type":["dbl"],"align":["right"]},{"label":["ef_money"],"name":[65],"type":["dbl"],"align":["right"]},{"label":["ef_trade_tariffs_revenue"],"name":[66],"type":["dbl"],"align":["right"]},{"label":["ef_trade_tariffs_mean"],"name":[67],"type":["dbl"],"align":["right"]},{"label":["ef_trade_tariffs_sd"],"name":[68],"type":["dbl"],"align":["right"]},{"label":["ef_trade_tariffs"],"name":[69],"type":["dbl"],"align":["right"]},{"label":["ef_trade_regulatory_nontariff"],"name":[70],"type":["dbl"],"align":["right"]},{"label":["ef_trade_regulatory_compliance"],"name":[71],"type":["dbl"],"align":["right"]},{"label":["ef_trade_regulatory"],"name":[72],"type":["dbl"],"align":["right"]},{"label":["ef_trade_black"],"name":[73],"type":["dbl"],"align":["right"]},{"label":["ef_trade_movement_foreign"],"name":[74],"type":["dbl"],"align":["right"]},{"label":["ef_trade_movement_capital"],"name":[75],"type":["dbl"],"align":["right"]},{"label":["ef_trade_movement_visit"],"name":[76],"type":["dbl"],"align":["right"]},{"label":["ef_trade_movement"],"name":[77],"type":["dbl"],"align":["right"]},{"label":["ef_trade"],"name":[78],"type":["dbl"],"align":["right"]},{"label":["ef_regulation_credit_ownership"],"name":[79],"type":["dbl"],"align":["right"]},{"label":["ef_regulation_credit_private"],"name":[80],"type":["dbl"],"align":["right"]},{"label":["ef_regulation_credit_interest"],"name":[81],"type":["dbl"],"align":["right"]},{"label":["ef_regulation_credit"],"name":[82],"type":["dbl"],"align":["right"]},{"label":["ef_regulation_labor_minwage"],"name":[83],"type":["dbl"],"align":["right"]},{"label":["ef_regulation_labor_firing"],"name":[84],"type":["dbl"],"align":["right"]},{"label":["ef_regulation_labor_bargain"],"name":[85],"type":["dbl"],"align":["right"]},{"label":["ef_regulation_labor_hours"],"name":[86],"type":["dbl"],"align":["right"]},{"label":["ef_regulation_labor_dismissal"],"name":[87],"type":["dbl"],"align":["right"]},{"label":["ef_regulation_labor_conscription"],"name":[88],"type":["dbl"],"align":["right"]},{"label":["ef_regulation_labor"],"name":[89],"type":["dbl"],"align":["right"]},{"label":["ef_regulation_business_adm"],"name":[90],"type":["dbl"],"align":["right"]},{"label":["ef_regulation_business_bureaucracy"],"name":[91],"type":["dbl"],"align":["right"]},{"label":["ef_regulation_business_start"],"name":[92],"type":["dbl"],"align":["right"]},{"label":["ef_regulation_business_bribes"],"name":[93],"type":["dbl"],"align":["right"]},{"label":["ef_regulation_business_licensing"],"name":[94],"type":["dbl"],"align":["right"]},{"label":["ef_regulation_business_compliance"],"name":[95],"type":["dbl"],"align":["right"]},{"label":["ef_regulation_business"],"name":[96],"type":["dbl"],"align":["right"]},{"label":["ef_regulation"],"name":[97],"type":["dbl"],"align":["right"]},{"label":["hf_score"],"name":[98],"type":["dbl"],"align":["right"]},{"label":["id"],"name":[99],"type":["int"],"align":["right"]}],"data":[{"1":"5.291752","2":"8.920429","3":"10","4":"10.00000","5":"10","6":"10.000000","7":"10.000000","8":"10.00000","9":"10","10":"7.5","11":"5","12":"7.500000","13":"8.806810","14":"5","15":"10","16":"5","17":"6.666667","18":"10","19":"9.566667","20":"8.011111","21":"9.192593","22":"10","23":"10","24":"10","25":"10","26":"10","27":"10","28":"10","29":"10","30":"5.000000","31":"5.25","32":"10","33":"10.0","34":"10.0","35":"8.607143","36":"10","37":"10","38":"10.0","39":"10","40":"10","41":"10","42":"6.2500000","43":"8.232353","44":"7.509902","45":"8","46":"9","47":"7","48":"8.0","49":"7.935564","50":"2.668222","51":"3.145462","52":"4.512228","53":"8.333333","54":"4.166667","55":"4.387444","56":"6.485287","57":"6.933500","58":"6.215401","59":"0.9487179","60":"5.071814","61":"8.986454","62":"9.484575","63":"9.74360","64":"10","65":"9.553657","66":"9.626667","67":"9.24","68":"8.0240","69":"8.963556","70":"5.574481","71":"9.405328","72":"7.489905","73":"10.00000","74":"6.306106","75":"4.615385","76":"8.296923","77":"6.406138","78":"8.214900","79":"5","80":"7.295687","81":"9","82":"7.098562","83":"5.566667","84":"5.396399","85":"6.234861","86":"8","87":"6.299741","88":"10","89":"6.916278","90":"6.072172","91":"6.000000","92":"9.713864","93":"4.050196","94":"7.324582","95":"7.074366","96":"6.705863","97":"6.906901","98":"7.568140","99":"1"},{"1":"3.819566","2":"9.456254","3":"10","4":"9.29403","5":"5","6":"9.926119","7":"9.990149","8":"8.84206","9":"10","10":"7.5","11":"0","12":"5.833333","13":"8.043882","14":"5","15":"5","16":"5","17":"5.000000","18":"5","19":"6.873333","20":"2.961111","21":"4.944815","22":"5","23":"5","24":"5","25":"5","26":"5","27":"5","28":"10","29":"10","30":"2.666667","31":"4.00","32":"10","33":"7.5","34":"7.5","35":"7.380952","36":"0","37":"5","38":"2.5","39":"0","40":"0","41":"0","42":"0.8333333","43":"2.150000","44":"7.817129","45":"0","46":"7","47":"2","48":"4.5","49":"3.616782","50":"4.186704","51":"4.327113","52":"4.689952","53":"4.166667","54":"5.000000","55":"4.507538","56":"6.626692","57":"6.136845","58":"6.737383","59":"0.8205128","60":"4.690743","61":"6.955962","62":"8.339152","63":"8.72046","64":"5","65":"7.253894","66":"8.480000","67":"6.22","68":"5.9176","69":"6.872533","70":"4.962589","71":"0.000000","72":"2.481294","73":"5.56391","74":"3.664829","75":"0.000000","76":"1.106256","77":"1.590362","78":"4.127025","79":"0","80":"5.301526","81":"10","82":"5.100509","83":"5.566667","84":"3.896912","85":"5.958321","86":"6","87":"7.755176","88":"1","89":"5.029513","90":"3.722341","91":"1.777778","92":"9.243070","93":"3.765515","94":"8.523503","95":"7.029528","96":"5.676956","97":"5.268992","98":"5.135886","99":"2"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
-</div>
-</div>
-</section>
-<section id="human-freedom-index-high-dimension-data-2" class="slide level2">
-<h2>Human Freedom Index (High Dimension Data)</h2>
-<h3 id="what-happens-in-a-traditional-linear-model">What Happens in a Traditional Linear Model?</h3>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>
-Call:
-lm(formula = pf_ss_homicide ~ ., data = xtrainLin)
-
-Residuals:
-ALL 74 residuals are 0: no residual degrees of freedom!
-
-Coefficients: (24 not defined because of singularities)
-                                     Estimate Std. Error t value Pr(&gt;|t|)
-(Intercept)                        -4.828e-08        NaN     NaN      NaN
-pf_rol                             -5.989e-09        NaN     NaN      NaN
-pf_ss_disappearances_disap         -2.000e-01        NaN     NaN      NaN
-pf_ss_disappearances_violent       -2.000e-01        NaN     NaN      NaN
-pf_ss_disappearances_organized     -2.000e-01        NaN     NaN      NaN
-pf_ss_disappearances_fatalities    -2.000e-01        NaN     NaN      NaN
-pf_ss_disappearances_injuries      -2.000e-01        NaN     NaN      NaN
-pf_ss_disappearances                       NA         NA      NA       NA
-pf_ss_women_fgm                    -3.333e-01        NaN     NaN      NaN
-pf_ss_women_missing                -3.333e-01        NaN     NaN      NaN
-pf_ss_women_inheritance            -3.333e-01        NaN     NaN      NaN
-pf_ss_women                                NA         NA      NA       NA
-pf_ss                               3.000e+00        NaN     NaN      NaN
-pf_movement_domestic                2.059e-09        NaN     NaN      NaN
-pf_movement_foreign                -2.576e-09        NaN     NaN      NaN
-pf_movement_women                   4.544e-09        NaN     NaN      NaN
-pf_movement                                NA         NA      NA       NA
-pf_religion_estop                   1.874e-09        NaN     NaN      NaN
-pf_religion_harassment              1.429e-09        NaN     NaN      NaN
-pf_religion_restrictions            5.939e-10        NaN     NaN      NaN
-pf_religion                                NA         NA      NA       NA
-pf_association_association          4.472e-09        NaN     NaN      NaN
-pf_association_assembly            -8.383e-10        NaN     NaN      NaN
-pf_association_political            1.599e-09        NaN     NaN      NaN
-pf_association_prof                 1.803e-09        NaN     NaN      NaN
-pf_association_sport               -1.672e-11        NaN     NaN      NaN
-pf_association                             NA         NA      NA       NA
-pf_expression_killed                2.962e-09        NaN     NaN      NaN
-pf_expression_jailed                7.773e-10        NaN     NaN      NaN
-pf_expression_influence             1.571e-09        NaN     NaN      NaN
-pf_expression_control              -1.363e-09        NaN     NaN      NaN
-pf_expression_cable                -1.065e-09        NaN     NaN      NaN
-pf_expression_newspapers           -1.120e-08        NaN     NaN      NaN
-pf_expression_internet             -2.992e-09        NaN     NaN      NaN
-pf_expression                              NA         NA      NA       NA
-pf_identity_parental_marriage       4.047e-09        NaN     NaN      NaN
-pf_identity_parental_divorce       -1.981e-09        NaN     NaN      NaN
-pf_identity_parental                       NA         NA      NA       NA
-pf_identity_sex_male               -1.433e-09        NaN     NaN      NaN
-pf_identity_sex_female              5.180e-10        NaN     NaN      NaN
-pf_identity_sex                            NA         NA      NA       NA
-pf_identity                        -6.020e-10        NaN     NaN      NaN
-ef_government_consumption           1.989e-09        NaN     NaN      NaN
-ef_government_transfers            -2.973e-09        NaN     NaN      NaN
-ef_government_enterprises          -1.866e-09        NaN     NaN      NaN
-ef_government_tax_income           -7.641e-13        NaN     NaN      NaN
-ef_government_tax_payroll          -6.907e-10        NaN     NaN      NaN
-ef_government_tax                          NA         NA      NA       NA
-ef_government                              NA         NA      NA       NA
-ef_legal_judicial                   1.037e-08        NaN     NaN      NaN
-ef_legal_courts                    -1.446e-08        NaN     NaN      NaN
-ef_legal_protection                 6.095e-09        NaN     NaN      NaN
-ef_legal_military                  -2.136e-09        NaN     NaN      NaN
-ef_legal_integrity                  6.408e-09        NaN     NaN      NaN
-ef_legal_enforcement                1.674e-09        NaN     NaN      NaN
-ef_legal_restrictions               2.779e-09        NaN     NaN      NaN
-ef_legal_police                    -3.080e-09        NaN     NaN      NaN
-ef_legal_crime                      3.751e-10        NaN     NaN      NaN
-ef_legal_gender                    -3.735e-09        NaN     NaN      NaN
-ef_legal                           -1.248e-08        NaN     NaN      NaN
-ef_money_growth                     5.089e-10        NaN     NaN      NaN
-ef_money_sd                        -3.425e-09        NaN     NaN      NaN
-ef_money_inflation                  3.617e-09        NaN     NaN      NaN
-ef_money_currency                   8.736e-10        NaN     NaN      NaN
-ef_money                                   NA         NA      NA       NA
-ef_trade_tariffs_revenue            1.210e-09        NaN     NaN      NaN
-ef_trade_tariffs_mean              -5.398e-09        NaN     NaN      NaN
-ef_trade_tariffs_sd                 1.353e-10        NaN     NaN      NaN
-ef_trade_tariffs                           NA         NA      NA       NA
-ef_trade_regulatory_nontariff      -5.353e-09        NaN     NaN      NaN
-ef_trade_regulatory_compliance     -4.284e-09        NaN     NaN      NaN
-ef_trade_regulatory                        NA         NA      NA       NA
-ef_trade_black                     -6.554e-10        NaN     NaN      NaN
-ef_trade_movement_foreign          -1.804e-09        NaN     NaN      NaN
-ef_trade_movement_capital          -1.658e-09        NaN     NaN      NaN
-ef_trade_movement_visit             1.650e-09        NaN     NaN      NaN
-ef_trade_movement                          NA         NA      NA       NA
-ef_trade                                   NA         NA      NA       NA
-ef_regulation_credit_ownership     -8.707e-10        NaN     NaN      NaN
-ef_regulation_credit_private       -5.779e-09        NaN     NaN      NaN
-ef_regulation_credit_interest       8.743e-09        NaN     NaN      NaN
-ef_regulation_credit                       NA         NA      NA       NA
-ef_regulation_labor_minwage        -8.041e-10        NaN     NaN      NaN
-ef_regulation_labor_firing          4.749e-09        NaN     NaN      NaN
-ef_regulation_labor_bargain        -1.695e-10        NaN     NaN      NaN
-ef_regulation_labor_hours          -3.095e-10        NaN     NaN      NaN
-ef_regulation_labor_dismissal      -7.202e-11        NaN     NaN      NaN
-ef_regulation_labor_conscription    2.395e-10        NaN     NaN      NaN
-ef_regulation_labor                        NA         NA      NA       NA
-ef_regulation_business_adm          7.877e-09        NaN     NaN      NaN
-ef_regulation_business_bureaucracy  2.608e-09        NaN     NaN      NaN
-ef_regulation_business_start               NA         NA      NA       NA
-ef_regulation_business_bribes              NA         NA      NA       NA
-ef_regulation_business_licensing           NA         NA      NA       NA
-ef_regulation_business_compliance          NA         NA      NA       NA
-ef_regulation_business                     NA         NA      NA       NA
-ef_regulation                              NA         NA      NA       NA
-hf_score                                   NA         NA      NA       NA
-
-Residual standard error: NaN on 0 degrees of freedom
-Multiple R-squared:      1, Adjusted R-squared:    NaN 
-F-statistic:   NaN on 73 and 0 DF,  p-value: NA</code></pre>
-</div>
-</div>
-<p><img data-src="LASSOPres_files/images/HFIModel1.png" data-fig-align="center" alt="Model Output"> <img data-src="LASSOPres_files/images/HFModel2.png" data-fig-align="center" alt="Model Output"></p>
-<p>The model does not work because there aren’t enough degrees of freedom.</p>
-</section>
-<section id="human-freedom-index-high-dimension-data-3" class="slide level2">
-<h2>Human Freedom Index (High Dimension Data)</h2>
-<h3 id="regularization-method">Regularization Method</h3>
-<p>Each method will have a model fit. These will then have their RSquare and RMSE scores displayed to show a relative performance for each method. In the GLMNET package, alpha controls the method used. An alpha value of 1 corresponds to LASSO regression, a value of 0 corresponds to Ridge Regression, and a value in between corresponds to a form of Elastic Net Regularization.</p>
-<h3 id="basic-code-structure">Basic Code Structure</h3>
-<ul>
-<li>Perform Cross Validation to acquire the optimal lambda. The alpha term is altered based on the method.</li>
-<li>Pass the optimal lambda into a new model based on the training data.</li>
-<li>Examine the impact on the coefficients.</li>
-<li>Using the model, make predictions on the training data and the test data.</li>
-<li>Store results and display scores for each method.</li>
-</ul>
-</section>
-<section id="human-freedom-index-high-dimension-data-4" class="slide level2">
-<h2>Human Freedom Index (High Dimension Data)</h2>
-<h3 id="fitting-lasso">Fitting LASSO</h3>
-<p><img data-src="LASSOPres_files/images/code1.png" data-fig-align="center" alt="Code 1"> <img data-src="LASSOPres_files/images/code2.png" data-fig-align="center" alt="Code 2"></p>
-<div class="cell">
-<div class="cell-output-display">
-<p><img data-src="LASSOPres_files/figure-revealjs/unnamed-chunk-33-1.png" width="960"></p>
-</div>
-</div>
-<p>The best Lambda chosen by this model was 0.0281</p>
-</section>
-<section id="human-freedom-index-high-dimension-data-5" class="slide level2">
-<h2>Human Freedom Index (High Dimension Data)</h2>
-<h3 id="results">Results</h3>
-<p>After repeating the process for Ridge, and 3 forms of Elastic Net, the end result of the modeling gives this table:</p>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>    Model Train_RSquare Train_RMSE Test_RSquare  Test_RMSE CoefficientCount
-1   LASSO     0.9990355 0.07489770    0.9987888 0.04107357               10
-2   Ridge     0.4804545 1.73830181    0.5447323 0.79632813               98
-3 ENet.25     0.9894375 0.24785442    0.9729043 0.19427156               34
-4 ENet.50     0.9968542 0.13526273    0.9933409 0.09630890               25
-5 ENet.75     0.9987353 0.08576457    0.9980376 0.05228243               14</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>                         Predictor          Coefficient
-1                      (Intercept)   0.0710898949596821
-2  pf_ss_disappearances_fatalities  -0.0148080723158391
-3             pf_ss_disappearances   -0.915994822784335
-4                      pf_ss_women   -0.948216869954757
-5                            pf_ss     2.86300337264974
-6           pf_religion_harassment -0.00703441466240136
-7                      pf_religion -0.00783189338049164
-8     pf_identity_parental_divorce -0.00380476119925454
-9                   ef_legal_crime   0.0343099854237406
-10         ef_trade_movement_visit -0.00214024034453352</code></pre>
-</div>
-</div>
-<h3 id="notes">Notes</h3>
-<ul>
-<li>Pure LASSO had the best fit.</li>
-<li>The model is still potentially overfit. (10 predictors vs 92 observations)</li>
-<li>Now there are features available for a more refined linear model.</li>
-<li>“Grouped” variables still need to be adjusted for.</li>
-</ul>
 </section>
 <section id="summary-and-conclusion" class="slide level2">
 <h2>Summary and Conclusion</h2>
