@@ -473,11 +473,10 @@
 <h3 id="data-overview">Data Overview</h3>
 <ul>
 <li>The Human Freedom Index from the openintro R package</li>
-<li>This data consists of sociological measures of the different types of freedom. The main dataset has 1458 observations with 123 variables</li>
+<li>This data consists of sociological measures of the different types of freedom.</li>
 <li>For this example, a single year of complete observations will be used, resulting in 93 observations across 99 variables.</li>
-<li>Mimics the situation if a researcher attempted to analyze the most recent year of data in isolation.</li>
 <li>Each column being examined in this data set is a continuous numerical variable.</li>
-<li>Some variables have high degrees of collinearity because of their relation to one another. For example, total disappearances is expected to have high collinearity with total violent disappearances.</li>
+<li>Some variables have high degrees of collinearity because of their relation to one another. For example, total disappearances vs total violent disappearances.</li>
 </ul>
 </section>
 <section id="human-freedom-index-high-dimension-data-1" class="slide level2">
@@ -515,8 +514,8 @@ ALL 74 residuals are 0: no residual degrees of freedom!
 
 Coefficients: (24 not defined because of singularities)
                                      Estimate Std. Error t value Pr(&gt;|t|)
-(Intercept)                        -2.577e-07        NaN     NaN      NaN
-pf_rol                              1.093e-09        NaN     NaN      NaN
+(Intercept)                         6.133e-09        NaN     NaN      NaN
+pf_rol                             -2.043e-09        NaN     NaN      NaN
 pf_ss_disappearances_disap         -2.000e-01        NaN     NaN      NaN
 pf_ss_disappearances_violent       -2.000e-01        NaN     NaN      NaN
 pf_ss_disappearances_organized     -2.000e-01        NaN     NaN      NaN
@@ -528,84 +527,84 @@ pf_ss_women_missing                -3.333e-01        NaN     NaN      NaN
 pf_ss_women_inheritance            -3.333e-01        NaN     NaN      NaN
 pf_ss_women                                NA         NA      NA       NA
 pf_ss                               3.000e+00        NaN     NaN      NaN
-pf_movement_domestic               -2.128e-10        NaN     NaN      NaN
-pf_movement_foreign                 1.804e-09        NaN     NaN      NaN
-pf_movement_women                   1.011e-09        NaN     NaN      NaN
+pf_movement_domestic               -1.075e-09        NaN     NaN      NaN
+pf_movement_foreign                 1.011e-09        NaN     NaN      NaN
+pf_movement_women                   4.530e-10        NaN     NaN      NaN
 pf_movement                                NA         NA      NA       NA
-pf_religion_estop                  -1.352e-09        NaN     NaN      NaN
-pf_religion_harassment              1.346e-09        NaN     NaN      NaN
-pf_religion_restrictions           -1.058e-09        NaN     NaN      NaN
+pf_religion_estop                  -2.036e-10        NaN     NaN      NaN
+pf_religion_harassment              9.805e-10        NaN     NaN      NaN
+pf_religion_restrictions           -1.877e-10        NaN     NaN      NaN
 pf_religion                                NA         NA      NA       NA
-pf_association_association         -1.792e-09        NaN     NaN      NaN
-pf_association_assembly             9.499e-10        NaN     NaN      NaN
-pf_association_political           -1.887e-10        NaN     NaN      NaN
-pf_association_prof                 5.459e-10        NaN     NaN      NaN
-pf_association_sport                1.024e-09        NaN     NaN      NaN
+pf_association_association         -6.053e-10        NaN     NaN      NaN
+pf_association_assembly             1.422e-09        NaN     NaN      NaN
+pf_association_political            3.710e-10        NaN     NaN      NaN
+pf_association_prof                 4.317e-11        NaN     NaN      NaN
+pf_association_sport               -6.652e-10        NaN     NaN      NaN
 pf_association                             NA         NA      NA       NA
-pf_expression_killed                1.098e-09        NaN     NaN      NaN
-pf_expression_jailed               -2.024e-09        NaN     NaN      NaN
-pf_expression_influence            -6.377e-10        NaN     NaN      NaN
-pf_expression_control              -1.000e-10        NaN     NaN      NaN
-pf_expression_cable                 2.357e-09        NaN     NaN      NaN
-pf_expression_newspapers            7.573e-10        NaN     NaN      NaN
-pf_expression_internet             -1.849e-10        NaN     NaN      NaN
+pf_expression_killed               -9.262e-11        NaN     NaN      NaN
+pf_expression_jailed                5.782e-11        NaN     NaN      NaN
+pf_expression_influence            -1.147e-09        NaN     NaN      NaN
+pf_expression_control               1.440e-09        NaN     NaN      NaN
+pf_expression_cable                 2.193e-09        NaN     NaN      NaN
+pf_expression_newspapers            2.832e-10        NaN     NaN      NaN
+pf_expression_internet             -2.303e-09        NaN     NaN      NaN
 pf_expression                              NA         NA      NA       NA
-pf_identity_parental_marriage       9.795e-10        NaN     NaN      NaN
-pf_identity_parental_divorce       -2.897e-10        NaN     NaN      NaN
+pf_identity_parental_marriage      -6.968e-11        NaN     NaN      NaN
+pf_identity_parental_divorce        5.785e-10        NaN     NaN      NaN
 pf_identity_parental                       NA         NA      NA       NA
-pf_identity_sex_male                7.542e-10        NaN     NaN      NaN
-pf_identity_sex_female             -1.812e-09        NaN     NaN      NaN
+pf_identity_sex_male                2.617e-10        NaN     NaN      NaN
+pf_identity_sex_female             -6.843e-10        NaN     NaN      NaN
 pf_identity_sex                            NA         NA      NA       NA
-pf_identity                        -2.020e-09        NaN     NaN      NaN
-ef_government_consumption          -1.439e-09        NaN     NaN      NaN
-ef_government_transfers             1.743e-10        NaN     NaN      NaN
-ef_government_enterprises          -2.477e-10        NaN     NaN      NaN
-ef_government_tax_income            1.130e-09        NaN     NaN      NaN
-ef_government_tax_payroll           5.007e-11        NaN     NaN      NaN
+pf_identity                        -8.277e-10        NaN     NaN      NaN
+ef_government_consumption          -1.771e-09        NaN     NaN      NaN
+ef_government_transfers             8.025e-10        NaN     NaN      NaN
+ef_government_enterprises           5.823e-10        NaN     NaN      NaN
+ef_government_tax_income            6.009e-10        NaN     NaN      NaN
+ef_government_tax_payroll          -4.891e-11        NaN     NaN      NaN
 ef_government_tax                          NA         NA      NA       NA
 ef_government                              NA         NA      NA       NA
-ef_legal_judicial                  -3.159e-09        NaN     NaN      NaN
-ef_legal_courts                     3.793e-09        NaN     NaN      NaN
-ef_legal_protection                 4.171e-09        NaN     NaN      NaN
-ef_legal_military                   3.295e-10        NaN     NaN      NaN
-ef_legal_integrity                  1.445e-10        NaN     NaN      NaN
-ef_legal_enforcement               -2.450e-09        NaN     NaN      NaN
-ef_legal_restrictions              -1.646e-09        NaN     NaN      NaN
-ef_legal_police                    -1.737e-09        NaN     NaN      NaN
-ef_legal_crime                      1.933e-10        NaN     NaN      NaN
-ef_legal_gender                     4.987e-09        NaN     NaN      NaN
-ef_legal                            4.031e-10        NaN     NaN      NaN
-ef_money_growth                    -2.190e-10        NaN     NaN      NaN
-ef_money_sd                         2.913e-09        NaN     NaN      NaN
-ef_money_inflation                 -2.856e-10        NaN     NaN      NaN
-ef_money_currency                   1.240e-09        NaN     NaN      NaN
+ef_legal_judicial                  -3.281e-09        NaN     NaN      NaN
+ef_legal_courts                    -3.016e-10        NaN     NaN      NaN
+ef_legal_protection                -5.387e-10        NaN     NaN      NaN
+ef_legal_military                  -3.003e-09        NaN     NaN      NaN
+ef_legal_integrity                 -1.053e-09        NaN     NaN      NaN
+ef_legal_enforcement               -1.228e-09        NaN     NaN      NaN
+ef_legal_restrictions              -2.887e-09        NaN     NaN      NaN
+ef_legal_police                    -2.713e-09        NaN     NaN      NaN
+ef_legal_crime                     -2.045e-09        NaN     NaN      NaN
+ef_legal_gender                    -5.009e-08        NaN     NaN      NaN
+ef_legal                            1.730e-08        NaN     NaN      NaN
+ef_money_growth                    -9.225e-10        NaN     NaN      NaN
+ef_money_sd                         1.736e-09        NaN     NaN      NaN
+ef_money_inflation                 -2.331e-09        NaN     NaN      NaN
+ef_money_currency                   5.415e-10        NaN     NaN      NaN
 ef_money                                   NA         NA      NA       NA
-ef_trade_tariffs_revenue           -2.284e-10        NaN     NaN      NaN
-ef_trade_tariffs_mean               3.017e-09        NaN     NaN      NaN
-ef_trade_tariffs_sd                 1.024e-09        NaN     NaN      NaN
+ef_trade_tariffs_revenue           -1.111e-09        NaN     NaN      NaN
+ef_trade_tariffs_mean               1.904e-09        NaN     NaN      NaN
+ef_trade_tariffs_sd                -2.822e-10        NaN     NaN      NaN
 ef_trade_tariffs                           NA         NA      NA       NA
-ef_trade_regulatory_nontariff      -1.042e-09        NaN     NaN      NaN
-ef_trade_regulatory_compliance     -5.374e-10        NaN     NaN      NaN
+ef_trade_regulatory_nontariff       7.279e-10        NaN     NaN      NaN
+ef_trade_regulatory_compliance      9.604e-10        NaN     NaN      NaN
 ef_trade_regulatory                        NA         NA      NA       NA
-ef_trade_black                      2.128e-08        NaN     NaN      NaN
-ef_trade_movement_foreign          -4.373e-09        NaN     NaN      NaN
-ef_trade_movement_capital          -2.954e-10        NaN     NaN      NaN
-ef_trade_movement_visit            -3.029e-10        NaN     NaN      NaN
+ef_trade_black                      1.301e-09        NaN     NaN      NaN
+ef_trade_movement_foreign           2.882e-10        NaN     NaN      NaN
+ef_trade_movement_capital          -1.694e-10        NaN     NaN      NaN
+ef_trade_movement_visit             1.343e-10        NaN     NaN      NaN
 ef_trade_movement                          NA         NA      NA       NA
 ef_trade                                   NA         NA      NA       NA
-ef_regulation_credit_ownership      1.284e-10        NaN     NaN      NaN
-ef_regulation_credit_private       -7.485e-10        NaN     NaN      NaN
-ef_regulation_credit_interest       2.745e-09        NaN     NaN      NaN
+ef_regulation_credit_ownership     -8.879e-11        NaN     NaN      NaN
+ef_regulation_credit_private       -1.313e-09        NaN     NaN      NaN
+ef_regulation_credit_interest       1.332e-09        NaN     NaN      NaN
 ef_regulation_credit                       NA         NA      NA       NA
-ef_regulation_labor_minwage         2.763e-10        NaN     NaN      NaN
-ef_regulation_labor_firing          9.433e-10        NaN     NaN      NaN
-ef_regulation_labor_bargain         6.190e-10        NaN     NaN      NaN
-ef_regulation_labor_hours          -2.784e-10        NaN     NaN      NaN
-ef_regulation_labor_dismissal       3.293e-10        NaN     NaN      NaN
-ef_regulation_labor_conscription   -4.282e-10        NaN     NaN      NaN
+ef_regulation_labor_minwage         1.613e-10        NaN     NaN      NaN
+ef_regulation_labor_firing          1.436e-09        NaN     NaN      NaN
+ef_regulation_labor_bargain         3.770e-10        NaN     NaN      NaN
+ef_regulation_labor_hours          -6.800e-11        NaN     NaN      NaN
+ef_regulation_labor_dismissal       1.606e-10        NaN     NaN      NaN
+ef_regulation_labor_conscription   -1.397e-10        NaN     NaN      NaN
 ef_regulation_labor                        NA         NA      NA       NA
-ef_regulation_business_adm         -2.391e-09        NaN     NaN      NaN
-ef_regulation_business_bureaucracy  4.209e-10        NaN     NaN      NaN
+ef_regulation_business_adm         -3.425e-09        NaN     NaN      NaN
+ef_regulation_business_bureaucracy  6.661e-10        NaN     NaN      NaN
 ef_regulation_business_start               NA         NA      NA       NA
 ef_regulation_business_bribes              NA         NA      NA       NA
 ef_regulation_business_licensing           NA         NA      NA       NA
@@ -648,7 +647,7 @@ F-statistic:   NaN on 73 and 0 DF,  p-value: NA</code></pre>
 <img data-src="LASSOPres_files/figure-revealjs/unnamed-chunk-7-1.png" width="960" class="r-stretch"><div class="cell">
 
 </div>
-<p>The best Lambda chosen by this model was 0.0258</p>
+<p>The best Lambda chosen by this model was 0.0289</p>
 </section>
 <section id="human-freedom-index-high-dimension-data-5" class="slide level2">
 <h2>Human Freedom Index (High Dimension Data)</h2>
@@ -657,28 +656,24 @@ F-statistic:   NaN on 73 and 0 DF,  p-value: NA</code></pre>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>    Model Train_RSquare Train_RMSE Test_RSquare  Test_RMSE CoefficientCount
-1   LASSO     0.9991154 0.06528001    0.9985217 0.05937492               14
-2   Ridge     0.5225016 1.51671199    0.2800712 1.31028149               98
-3 ENet.25     0.9834955 0.28198002    0.9499054 0.34563294               37
-4 ENet.50     0.9947128 0.15959898    0.9852699 0.18742299               29
-5 ENet.75     0.9979777 0.09870463    0.9957020 0.10124062               19</code></pre>
+1   LASSO     0.9990774 0.07396201    0.9988472 0.03824280               10
+2   Ridge     0.5070464 1.70963206    0.3787948 0.88775101               98
+3 ENet.25     0.9894628 0.24995494    0.9721685 0.18790653               38
+4 ENet.50     0.9967215 0.13942385    0.9928500 0.09524185               26
+5 ENet.75     0.9986910 0.08809810    0.9979158 0.05142148               17</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>                         Predictor           Coefficient
-1                      (Intercept)     0.140032125128386
-2  pf_ss_disappearances_fatalities   -0.0196133621001942
-3             pf_ss_disappearances    -0.909032875724508
-4              pf_ss_women_missing  -0.00191585693668079
-5                      pf_ss_women    -0.951612121503883
-6                            pf_ss      2.84729207106464
-7           pf_religion_harassment   -0.0196151887533791
-8                      pf_religion -0.000256037945111807
-9             pf_expression_killed    0.0104415208876299
-10        pf_expression_newspapers  -0.00425748319019571
-11           ef_legal_restrictions -0.000369574913032326
-12                  ef_legal_crime    0.0320938383793796
-13               ef_trade_movement   -0.0059680490010127
-14    ef_regulation_business_start   0.00951878719305032</code></pre>
+<pre><code>                         Predictor          Coefficient
+1                      (Intercept)     0.23536250769128
+2  pf_ss_disappearances_fatalities  -0.0272462418025622
+3             pf_ss_disappearances   -0.913673587850228
+4              pf_ss_women_missing -0.00308558707600017
+5                      pf_ss_women    -0.95346463720301
+6                            pf_ss     2.85919337526971
+7           pf_religion_harassment  -0.0145198179100964
+8                      pf_religion -0.00125307904338788
+9                   ef_legal_crime    0.039532539635956
+10               ef_trade_movement -0.00306224019078409</code></pre>
 </div>
 </div>
 <h3 id="notes">Notes</h3>

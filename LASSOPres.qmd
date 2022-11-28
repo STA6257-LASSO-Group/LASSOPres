@@ -153,11 +153,10 @@ finalModelPredict <- predict(finalModel, s= bestLambda, newx = predictors)
 ### Data Overview
 
 -   The Human Freedom Index from the openintro R package
--   This data consists of sociological measures of the different types of freedom. The main dataset has 1458 observations with 123 variables
+-   This data consists of sociological measures of the different types of freedom.
 -   For this example, a single year of complete observations will be used, resulting in 93 observations across 99 variables.
--   Mimics the situation if a researcher attempted to analyze the most recent year of data in isolation.
 -   Each column being examined in this data set is a continuous numerical variable.
--   Some variables have high degrees of collinearity because of their relation to one another. For example, total disappearances is expected to have high collinearity with total violent disappearances.
+-   Some variables have high degrees of collinearity because of their relation to one another. For example, total disappearances vs total violent disappearances.
 
 ## Human Freedom Index (High Dimension Data)
 
